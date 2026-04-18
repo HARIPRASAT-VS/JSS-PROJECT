@@ -6,7 +6,7 @@ const User = require('../models/User');
 const OTP = require('../models/OTP');
 const Config = require('../models/Config');
 const LeaveRequest = require('../models/LeaveRequest');
-const YearRegistry = require('../models/YearRegistry');
+const Group = require('../models/Group');
 
 // Helper function: Haversine distance
 function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
@@ -22,18 +22,21 @@ function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
 // @desc    Get the active OTP for the student's assigned faculty
 router.get('/active-otp', protect, async (req, res) => {
     try {
-        // Find the YearRegistry this student belongs to
-        const registry = await YearRegistry.findOne({ members: req.user.id });
-        if (!registry) {
-            return res.json(null); // No registry or faculty assigned
+        // Find all groups this student belongs to
+        const groups = await Group.find({ students: req.user.id, isDeleted: false });
+        if (!groups.length) {
+            return res.json(null);
         }
         
-        // Find any active OTP from any faculty assigned to this student's year
+        // Collect all faculty IDs for these groups
+        const facultyIds = groups.map(g => g.facultyId);
+        
+        // Find any active OTP from these faculties
         const activeOtp = await OTP.findOne({ 
-            facultyId: { $in: registry.faculties }, 
+            facultyId: { $in: facultyIds }, 
             isActive: true, 
             expiresAt: { $gt: new Date() } 
-        }).sort({ createdAt: -1 }); // Get latest if multiple
+        }).sort({ createdAt: -1 });
         
         if (activeOtp) {
             res.json({ otpCode: activeOtp.otpCode, expiresAt: activeOtp.expiresAt });
@@ -54,13 +57,15 @@ router.post('/check-in', protect, async (req, res) => {
         
         if (user.isBlocked) return res.status(403).json({ message: 'You are blocked. Submit an unblock request via Faculty.' });
         
-        // Find registry for student
-        const registry = await YearRegistry.findOne({ members: req.user.id });
-        if (!registry) return res.status(400).json({ message: 'No year assignment found. Cannot mark attendance.' });
+        // Find group for student
+        const groups = await Group.find({ students: req.user.id, isDeleted: false });
+        if (!groups.length) return res.status(400).json({ message: 'No team assignment found. Cannot mark attendance.' });
  
-        // OTP Validation (check against any allowed faculty in the registry)
+        const facultyIds = groups.map(g => g.facultyId);
+
+        // OTP Validation
         const validOtp = await OTP.findOne({ 
-            facultyId: { $in: registry.faculties }, 
+            facultyId: { $in: facultyIds }, 
             otpCode: otp, 
             isActive: true, 
             expiresAt: { $gt: new Date() } 

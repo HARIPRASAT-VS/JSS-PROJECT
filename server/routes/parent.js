@@ -5,7 +5,7 @@ const Attendance = require('../models/Attendance');
 const AcademicTest = require('../models/AcademicTest');
 const LeaveRequest = require('../models/LeaveRequest');
 const FeeRecord = require('../models/FeeRecord');
-const YearRegistry = require('../models/YearRegistry');
+const Group = require('../models/Group');
 const { protect } = require('../middleware/auth');
 
 // Helper: Ensure user is a parent and find their child (more robust)
@@ -38,8 +38,8 @@ router.get('/dashboard', protect, async (req, res) => {
         const totalPending = feeRecord ? feeRecord.totalPending : 0;
         
         // Dynamic Year Info
-        const registry = await YearRegistry.findOne({ members: childId });
-        const registryYear = registry ? registry.year : 'Unassigned Year';
+        const group = await Group.findOne({ students: childId, isDeleted: false });
+        const registryYear = group ? group.year : 'Unassigned Year';
  
         res.json({
             child: {
