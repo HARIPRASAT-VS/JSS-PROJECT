@@ -14,6 +14,8 @@ const adminRoutes = require('./routes/admin');
 const facultyRoutes = require('./routes/faculty');
 const studentRoutes = require('./routes/student');
 const registryRoutes = require('./routes/registry');
+const parentRoutes = require('./routes/parent');
+const feeRoutes = require('./routes/fee');
 const initCronJobs = require('./utils/cronJobs');
 
 const app = express();
@@ -63,6 +65,8 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/faculty', facultyRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/registry', registryRoutes);
+app.use('/api/parent', parentRoutes);
+app.use('/api/fee', feeRoutes);
 
 // Database Connection
 mongoose.connect(process.env.MONGODB_URI)

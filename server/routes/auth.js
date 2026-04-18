@@ -92,7 +92,14 @@ router.post('/google', async (req, res) => {
         const adminEmails = ['harivelmani@gmail.com', 'harivelamani@gmail.com'];
 
         if (!user) {
-            const userRole = adminEmails.includes(email.toLowerCase()) ? 'admin' : 'student';
+            // Check if this email is registered as a parent in any student's profile
+            const isParent = await User.findOne({ 
+                'parents.email': email.toLowerCase() 
+            });
+
+            const userRole = adminEmails.includes(email.toLowerCase()) 
+                ? 'admin' 
+                : (isParent ? 'parent' : 'student');
             
             // Handle missing fields from Google Profile robustly
             user = await User.create({ 
@@ -195,13 +202,29 @@ router.get('/me', protect, async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('firstName lastName email role');
         if (!user) return res.status(404).json({ message: 'User not found' });
-        res.json({
+        
+        const responseData = {
             _id: user._id,
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
             role: user.role
-        });
+        };
+
+        // If parent, find their child
+        if (user.role === 'parent') {
+            const child = await User.findOne({ 
+                'parents.email': user.email.toLowerCase() 
+            }).select('firstName lastName _id');
+            if (child) {
+                responseData.child = {
+                    _id: child._id,
+                    name: `${child.firstName} ${child.lastName}`
+                };
+            }
+        }
+
+        res.json(responseData);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

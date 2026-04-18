@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
     googleId: { type: String },
     resetOTP: { type: String },
     otpExpiry: { type: Date },
-    role: { type: String, enum: ['student', 'faculty', 'admin'], default: 'student' },
+    role: { type: String, enum: ['student', 'faculty', 'admin', 'parent'], default: 'student' },
     facultyId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // For students
     warningCount: { type: Number, default: 0 },
     isBlocked: { type: Boolean, default: false },

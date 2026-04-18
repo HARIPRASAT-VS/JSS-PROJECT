@@ -34,7 +34,14 @@ const SideNavBar = () => {
         { name: 'Blocked Users', icon: 'block', path: '/admin/blocked' },
     ];
 
+    const parentItems = [
+        ...commonItems,
+        { name: 'Marks', icon: 'grade', path: '/parent/marks' },
+        { name: 'Leave', icon: 'rule', path: '/parent/leave' },
+    ];
+
     const navItems = user?.role === 'admin' ? adminItems : 
+                   user?.role === 'parent' ? parentItems :
                    user?.role === 'faculty' ? facultyItems : 
                    studentItems;
 

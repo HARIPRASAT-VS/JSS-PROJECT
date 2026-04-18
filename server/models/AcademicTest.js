@@ -9,6 +9,7 @@ const academicTestSchema = new mongoose.Schema({
         required: true 
     },
     testName: { type: String, required: true },
+    testDate: { type: Date, required: true },
     subject: { type: String },
     totalMarks: { type: Number, required: true },
     scores: [{

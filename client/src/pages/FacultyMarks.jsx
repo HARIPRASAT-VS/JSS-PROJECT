@@ -18,6 +18,7 @@ const FacultyMarks = () => {
     // Config Form State
     const [testName, setTestName] = useState('');
     const [totalMarks, setTotalMarks] = useState('');
+    const [testDate, setTestDate] = useState('');
     const [configLocked, setConfigLocked] = useState(false);
 
     // Scores State
@@ -45,8 +46,8 @@ const FacultyMarks = () => {
     const handleFormSubmit = (e) => {
         if (e) e.preventDefault();
         
-        if (!testName.trim() || !totalMarks) {
-            setAlertMsg({ type: 'error', text: 'Please enter a name and total marks for this assessment.' });
+        if (!testName.trim() || !totalMarks || !testDate) {
+            setAlertMsg({ type: 'error', text: 'Please enter a name, date, and total marks for this assessment.' });
             return;
         }
 
@@ -123,6 +124,7 @@ const FacultyMarks = () => {
                 testType: activeTab,
                 testName,
                 totalMarks: Number(totalMarks),
+                testDate,
                 scores: mappedScores
             });
             
@@ -132,6 +134,7 @@ const FacultyMarks = () => {
                     setConfigLocked(false);
                     setTestName('');
                     setTotalMarks('');
+                    setTestDate('');
                     setAlertMsg({ type: '', text: '' });
                 }, 2500);
             }
@@ -225,6 +228,17 @@ const FacultyMarks = () => {
                                             value={testName}
                                             onChange={e => setTestName(e.target.value)}
                                             placeholder={currentTabConf.inputPlaceholder}
+                                            className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-bold focus:border-indigo-500 outline-none transition-all disabled:opacity-50"
+                                        />
+                                    </div>
+                                    <div className="md:col-span-1">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Test Date</label>
+                                        <input 
+                                            required
+                                            disabled={configLocked}
+                                            type="date"
+                                            value={testDate}
+                                            onChange={e => setTestDate(e.target.value)}
                                             className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-bold focus:border-indigo-500 outline-none transition-all disabled:opacity-50"
                                         />
                                     </div>

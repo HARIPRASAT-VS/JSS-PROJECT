@@ -138,10 +138,10 @@ router.get('/assigned-groups', protect, authorizeFaculty, async (req, res) => {
 // @desc    Batch upsert academic marks securely
 router.post('/academic-tests', protect, authorizeFaculty, async (req, res) => {
     try {
-        const { assignedTo, testType, testName, totalMarks, scores } = req.body;
+        const { assignedTo, testType, testName, totalMarks, testDate, scores } = req.body;
         
-        if (!assignedTo || !testType || !testName || !totalMarks || !scores) {
-            return res.status(400).json({ message: 'Missing required configuration fields.' });
+        if (!assignedTo || !testType || !testName || !totalMarks || !testDate || !scores) {
+            return res.status(400).json({ message: 'Missing required configuration fields (testDate is required).' });
         }
 
         // Get all students currently assigned to this faculty across all registries
@@ -162,7 +162,7 @@ router.post('/academic-tests', protect, authorizeFaculty, async (req, res) => {
 
         const test = await AcademicTest.findOneAndUpdate(
             { facultyId: req.user.id, testType, testName, assignedTo },
-            { totalMarks, scores },
+            { totalMarks, testDate, scores },
             { new: true, upsert: true }
         );
 
@@ -252,6 +252,14 @@ router.post('/leaves/:id', protect, authorizeFaculty, async (req, res) => {
         const leave = await LeaveRequest.findById(req.params.id);
         if (!leave) return res.status(404).json({ success: false, message: 'Leave not found' });
         
+        // PARENT GATE: Faculty cannot approve/reject before Parent
+        if (leave.parentStatus === 'Pending') {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Action blocked. This leave request is still waiting for Parent approval.' 
+            });
+        }
+
         leave.status = status;
         await leave.save();
         res.json({ success: true, data: leave });

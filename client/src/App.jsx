@@ -16,6 +16,10 @@ import FacultyMarks from './pages/FacultyMarks';
 import FacultyReports from './pages/FacultyReports';
 import AssignFaculty from './pages/AssignFaculty';
 import BlockedUsersPage from './pages/BlockedUsersPage';
+import ParentDashboard from './pages/ParentDashboard';
+import ParentMarks from './pages/ParentMarks';
+import ParentLeave from './pages/ParentLeave';
+import ParentFees from './pages/ParentFees';
 
 function App() {
   const { user } = useContext(AuthContext);
@@ -30,6 +34,7 @@ function App() {
               <ProtectedRoute>
                   {user?.role === 'admin' ? <AdminDashboard /> : 
                    user?.role === 'faculty' ? <FacultyDashboard /> : 
+                   user?.role === 'parent' ? <ParentDashboard /> :
                    <Dashboard />}
               </ProtectedRoute>
           } />
@@ -85,6 +90,23 @@ function App() {
           <Route path="/faculty/reports/:type/:testId" element={
               <ProtectedRoute allowedRoles={['faculty']}>
                   <FacultyReports />
+              </ProtectedRoute>
+          } />
+
+          {/* Parent Routes */}
+          <Route path="/parent/marks" element={
+              <ProtectedRoute allowedRoles={['parent']}>
+                  <ParentMarks />
+              </ProtectedRoute>
+          } />
+          <Route path="/parent/leave" element={
+              <ProtectedRoute allowedRoles={['parent']}>
+                  <ParentLeave />
+              </ProtectedRoute>
+          } />
+          <Route path="/parent/fees" element={
+              <ProtectedRoute allowedRoles={['parent']}>
+                  <ParentFees />
               </ProtectedRoute>
           } />
 
