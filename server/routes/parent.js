@@ -92,9 +92,14 @@ router.get('/marks', protect, async (req, res) => {
 // @route   GET api/parent/leave
 router.get('/leave', protect, async (req, res) => {
     try {
-        const childId = await getChildId(req.user.email);
-        const leaves = await LeaveRequest.find({ userId: childId, status: 'Pending' })
-            .populate('facultyId', 'firstName lastName');
+        const child = await getChildId(req.user.email);
+        if (!child) return res.json([]);
+        const childId = child._id;
+        
+        // Show all leaves for that child (not just pending) to show history
+        const leaves = await LeaveRequest.find({ userId: childId })
+            .populate('facultyId', 'firstName lastName email')
+            .sort({ createdAt: -1 });
         res.json(leaves);
     } catch (error) {
         res.status(500).json({ message: error.message });

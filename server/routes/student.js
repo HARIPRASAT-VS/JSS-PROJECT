@@ -3,16 +3,41 @@ const router = express.Router();
 const { protect } = require('../middleware/auth');
 const LeaveRequest = require('../models/LeaveRequest');
 const User = require('../models/User');
+const Group = require('../models/Group');
 const YearRegistry = require('../models/YearRegistry');
 
 // ─── GET /api/student/year-faculties ──────────────────────────────────────────
 // Returns all faculties from the year the student is registered under
 router.get('/year-faculties', protect, async (req, res) => {
     try {
-        const registry = await YearRegistry.findOne({ members: req.user.id })
-            .populate('faculties', 'firstName lastName email');
-        if (!registry) return res.json({ faculties: [], year: null });
-        res.json({ faculties: registry.faculties, year: registry.year });
+        const mongoose = require('mongoose');
+        const userId = new mongoose.Types.ObjectId(req.user.id);
+
+        // Find associated years/faculties from both sources
+        const [registry, group] = await Promise.all([
+            YearRegistry.findOne({ members: userId }).populate('faculties', 'firstName lastName email'),
+            Group.findOne({ students: userId, isDeleted: false }).populate('facultyId', 'firstName lastName email')
+        ]);
+
+        const faculties = new Map();
+        let yearName = null;
+
+        if (registry) {
+            yearName = registry.year;
+            registry.faculties.forEach(f => faculties.set(String(f._id), f));
+        }
+
+        if (group) {
+            yearName = yearName || group.year;
+            if (group.facultyId) {
+                faculties.set(String(group.facultyId._id), group.facultyId);
+            }
+        }
+
+        res.json({ 
+            faculties: Array.from(faculties.values()), 
+            year: yearName 
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
