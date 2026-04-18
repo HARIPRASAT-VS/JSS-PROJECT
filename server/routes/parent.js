@@ -8,9 +8,12 @@ const FeeRecord = require('../models/FeeRecord');
 const YearRegistry = require('../models/YearRegistry');
 const { protect } = require('../middleware/auth');
 
-// Helper: Ensure user is a parent and find their child
+// Helper: Ensure user is a parent and find their child (more robust)
 const getChildId = async (parentEmail) => {
-    const child = await User.findOne({ 'parents.email': parentEmail.toLowerCase() });
+    if (!parentEmail) return null;
+    const child = await User.findOne({ 
+        'parents.email': { $regex: new RegExp(`^${parentEmail}$`, 'i') } 
+    });
     return child ? child._id : null;
 };
 
@@ -39,13 +42,16 @@ router.get('/dashboard', protect, async (req, res) => {
         const registryYear = registry ? registry.year : 'Unassigned Year';
  
         res.json({
-            child,
-            registryYear,
+            child: {
+                name: (child.firstName + ' ' + child.lastName).trim(),
+                email: child.email || 'N/A'
+            },
+            registryYear: registryYear || 'Not Enrolled',
             stats: {
-                attendancePercentage,
-                presentSessions,
-                totalSessions,
-                totalPending
+                attendancePercentage: Number(attendancePercentage),
+                presentSessions: Number(presentSessions),
+                totalSessions: Number(totalSessions),
+                totalPending: Number(totalPending)
             }
         });
     } catch (error) {

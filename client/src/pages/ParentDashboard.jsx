@@ -76,7 +76,9 @@ const ParentDashboard = () => {
                                     />
                                 </svg>
                                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span className={`text-4xl font-black ${attendanceColor}`}>{stats?.stats?.attendancePercentage}%</span>
+                                    <span className={`text-4xl font-black ${attendanceColor}`}>
+                                        {Number(stats?.stats?.attendancePercentage || 0).toFixed(1)}%
+                                    </span>
                                     <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Attendance</span>
                                 </div>
                             </div>
