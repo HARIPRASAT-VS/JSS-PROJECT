@@ -1,0 +1,73 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  darkMode: "class",
+  theme: {
+    extend: {
+      "colors": {
+              "secondary-fixed": "#ebdcff",
+              "surface-dim": "#d9dadb",
+              "primary-fixed": "#dee0ff",
+              "surface-variant": "#e1e3e4",
+              "secondary": "#6f48b2",
+              "on-secondary-fixed": "#260058",
+              "secondary-container": "#b78efe",
+              "on-error-container": "#93000a",
+              "on-tertiary-container": "#56e4f9",
+              "error": "#ba1a1a",
+              "tertiary-container": "#00646f",
+              "background": "#f8f9fa",
+              "surface-container-highest": "#e1e3e4",
+              "on-secondary": "#ffffff",
+              "on-secondary-container": "#491d8a",
+              "on-tertiary-fixed-variant": "#004f58",
+              "on-tertiary": "#ffffff",
+              "surface-tint": "#4555b7",
+              "on-background": "#191c1d",
+              "outline": "#757684",
+              "primary": "#27389a",
+              "tertiary-fixed-dim": "#45d8ed",
+              "tertiary": "#004a53",
+              "on-secondary-fixed-variant": "#572e99",
+              "primary-fixed-dim": "#bbc3ff",
+              "on-surface-variant": "#454652",
+              "surface-container": "#edeeef",
+              "surface": "#f8f9fa",
+              "outline-variant": "#c5c5d4",
+              "on-primary": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-high": "#e7e8e9",
+              "on-tertiary-fixed": "#001f24",
+              "inverse-on-surface": "#f0f1f2",
+              "on-primary-container": "#cacfff",
+              "on-primary-fixed": "#000e5e",
+              "on-error": "#ffffff",
+              "error-container": "#ffdad6",
+              "primary-container": "#4151b3",
+              "tertiary-fixed": "#98f0ff",
+              "inverse-surface": "#2e3132",
+              "on-primary-fixed-variant": "#2c3c9e",
+              "inverse-primary": "#bbc3ff",
+              "secondary-fixed-dim": "#d4bbff",
+              "surface-container-low": "#f3f4f5",
+              "surface-bright": "#f8f9fa",
+              "on-surface": "#191c1d"
+      },
+      "borderRadius": {
+              "DEFAULT": "0.25rem",
+              "lg": "0.5rem",
+              "xl": "0.75rem",
+              "full": "9999px"
+      },
+      "fontFamily": {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+      }
+    },
+  },
+  plugins: [],
+}

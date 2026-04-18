@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer base {
+  body {
+    @apply font-body bg-background text-on-surface min-h-screen;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-3xl;
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .glass {
+    @apply backdrop-blur-3xl bg-white/70;
+  }
+
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    display: inline-block;
+    line-height: 1;
+  }
+
+  .bg-gradient-mesh {
+    @apply bg-background;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(39, 56, 154, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(111, 72, 178, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(39, 56, 154, 0.1) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(111, 72, 178, 0.1) 0px, transparent 50%);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-outline-variant/30 rounded-full hover:bg-outline-variant/50 transition-colors;
+}
+
+/* Auth input focus */
+input:focus {
+  @apply outline-none ring-0;
+}
