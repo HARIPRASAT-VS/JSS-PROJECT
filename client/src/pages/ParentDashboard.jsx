@@ -46,12 +46,16 @@ const ParentDashboard = () => {
                             <span className="material-symbols-outlined text-4xl">person</span>
                         </div>
                         <div className="text-center md:text-left">
-                            <h2 className="text-2xl font-bold text-slate-800">{stats?.child?.firstName} {stats?.child?.lastName}</h2>
-                            <p className="text-slate-500 font-medium">B.Tech Information Technology</p>
+                            <h2 className="text-2xl font-bold text-slate-800">
+                                {stats?.child?.name || 'Loading Name...'}
+                            </h2>
+                            <p className="text-slate-500 font-medium">
+                                {stats?.registryYear || 'Fetching Registry...'}
+                            </p>
                             <div className="flex items-center gap-2 mt-2 justify-center md:justify-start">
                                 <span className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-bold uppercase tracking-wider">STUDENT</span>
                                 <span className="text-slate-300">|</span>
-                                <span className="text-slate-500 text-sm">{stats?.child?.email}</span>
+                                <span className="text-slate-500 text-sm">{stats?.child?.email || 'No email found'}</span>
                             </div>
                         </div>
                     </section>
