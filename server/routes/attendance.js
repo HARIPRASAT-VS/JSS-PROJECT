@@ -22,8 +22,14 @@ function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
 // @desc    Get the active OTP for the student's assigned faculty
 router.get('/active-otp', protect, async (req, res) => {
     try {
+        const mongoose = require('mongoose');
+        const userId = new mongoose.Types.ObjectId(req.user.id);
+        
         // Find all groups this student belongs to
-        const groups = await Group.find({ students: req.user.id, isDeleted: false });
+        const groups = await Group.find({ 
+            students: userId, 
+            isDeleted: false 
+        });
         if (!groups.length) {
             return res.json(null);
         }
@@ -57,8 +63,11 @@ router.post('/check-in', protect, async (req, res) => {
         
         if (user.isBlocked) return res.status(403).json({ message: 'You are blocked. Submit an unblock request via Faculty.' });
         
+        const mongoose = require('mongoose');
+        const userId = new mongoose.Types.ObjectId(req.user.id);
+
         // Find group for student
-        const groups = await Group.find({ students: req.user.id, isDeleted: false });
+        const groups = await Group.find({ students: userId, isDeleted: false });
         if (!groups.length) return res.status(400).json({ message: 'No team assignment found. Cannot mark attendance.' });
  
         const facultyIds = groups.map(g => g.facultyId);
