@@ -11,10 +11,11 @@ const { protect } = require('../middleware/auth');
 // Helper: Ensure user is a parent and find their child (more robust)
 const getChildId = async (parentEmail) => {
     if (!parentEmail) return null;
+    const emailToSearch = parentEmail.trim().toLowerCase();
     const child = await User.findOne({ 
-        'parents.email': { $regex: new RegExp(`^${parentEmail}$`, 'i') } 
-    });
-    return child ? child._id : null;
+        'parents.email': { $regex: new RegExp(`^${emailToSearch}$`, 'i') } 
+    }).select('_id firstName lastName email parents');
+    return child || null;
 };
 
 // @route   GET api/parent/dashboard
@@ -22,10 +23,9 @@ router.get('/dashboard', protect, async (req, res) => {
     try {
         if (req.user.role !== 'parent') return res.status(403).json({ message: 'Access denied' });
         
-        const childId = await getChildId(req.user.email);
-        if (!childId) return res.status(404).json({ message: 'Child not found' });
-
-        const child = await User.findById(childId).select('firstName lastName email');
+        const child = await getChildId(req.user.email);
+        if (!child) return res.status(404).json({ message: 'Child not found' });
+        const childId = child._id;
         
         // Dynamic Attendance Calculation
         const attendance = await Attendance.find({ userId: childId });
@@ -37,13 +37,16 @@ router.get('/dashboard', protect, async (req, res) => {
         const feeRecord = await FeeRecord.findOne({ studentId: childId });
         const totalPending = feeRecord ? feeRecord.totalPending : 0;
         
-        // Dynamic Year Info
-        const group = await Group.findOne({ students: childId, isDeleted: false });
-        const registryYear = group ? group.year : 'Unassigned Year';
- 
+        // Dynamic Year Info (Unify Search)
+        const [group, registry] = await Promise.all([
+            Group.findOne({ students: childId, isDeleted: false }),
+            YearRegistry.findOne({ members: childId })
+        ]);
+        const registryYear = group ? group.year : (registry ? registry.year : 'Unassigned Year');
+  
         res.json({
             child: {
-                name: (child.firstName + ' ' + child.lastName).trim(),
+                name: (child.firstName + ' ' + (child.lastName || '')).trim() || 'Assigned Student',
                 email: child.email || 'N/A'
             },
             registryYear: registryYear || 'Not Enrolled',
