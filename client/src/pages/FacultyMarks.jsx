@@ -265,7 +265,7 @@ const FacultyMarks = () => {
                                             <button 
                                                 type="button"
                                                 onClick={() => handleFormSubmit()}
-                                                disabled={!testName.trim() || !totalMarks}
+                                                disabled={!testName.trim() || !totalMarks || !testDate}
                                                 className="w-full bg-indigo-600 text-white p-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 disabled:opacity-50"
                                             >
                                                 <span className="material-symbols-outlined text-sm">play_arrow</span> Start Grading
