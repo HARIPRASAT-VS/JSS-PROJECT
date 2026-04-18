@@ -6,6 +6,7 @@ const User = require('../models/User');
 const OTP = require('../models/OTP');
 const Config = require('../models/Config');
 const LeaveRequest = require('../models/LeaveRequest');
+const YearRegistry = require('../models/YearRegistry');
 
 // Helper function: Haversine distance
 function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
@@ -21,16 +22,18 @@ function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
 // @desc    Get the active OTP for the student's assigned faculty
 router.get('/active-otp', protect, async (req, res) => {
     try {
-        const user = await User.findById(req.user.id);
-        if (!user.facultyId) {
-            return res.status(400).json({ message: 'No faculty assigned to you.' });
+        // Find the YearRegistry this student belongs to
+        const registry = await YearRegistry.findOne({ members: req.user.id });
+        if (!registry) {
+            return res.json(null); // No registry or faculty assigned
         }
         
+        // Find any active OTP from any faculty assigned to this student's year
         const activeOtp = await OTP.findOne({ 
-            facultyId: user.facultyId, 
+            facultyId: { $in: registry.faculties }, 
             isActive: true, 
             expiresAt: { $gt: new Date() } 
-        });
+        }).sort({ createdAt: -1 }); // Get latest if multiple
         
         if (activeOtp) {
             res.json({ otpCode: activeOtp.otpCode, expiresAt: activeOtp.expiresAt });
@@ -51,11 +54,17 @@ router.post('/check-in', protect, async (req, res) => {
         
         if (user.isBlocked) return res.status(403).json({ message: 'You are blocked. Submit an unblock request via Faculty.' });
         
-        // Ensure student has a faculty assigned
-        if (!user.facultyId) return res.status(400).json({ message: 'No faculty assigned to you. Cannot mark attendance.' });
-
-        // OTP Validation
-        const validOtp = await OTP.findOne({ facultyId: user.facultyId, otpCode: otp, isActive: true, expiresAt: { $gt: new Date() } });
+        // Find registry for student
+        const registry = await YearRegistry.findOne({ members: req.user.id });
+        if (!registry) return res.status(400).json({ message: 'No year assignment found. Cannot mark attendance.' });
+ 
+        // OTP Validation (check against any allowed faculty in the registry)
+        const validOtp = await OTP.findOne({ 
+            facultyId: { $in: registry.faculties }, 
+            otpCode: otp, 
+            isActive: true, 
+            expiresAt: { $gt: new Date() } 
+        });
         if (!validOtp) return res.status(400).json({ message: 'Invalid or Expired OTP' });
 
         // Location Validation
