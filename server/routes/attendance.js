@@ -7,6 +7,7 @@ const OTP = require('../models/OTP');
 const Config = require('../models/Config');
 const LeaveRequest = require('../models/LeaveRequest');
 const Group = require('../models/Group');
+const YearRegistry = require('../models/YearRegistry');
 
 // Helper function: Haversine distance
 function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
@@ -25,21 +26,23 @@ router.get('/active-otp', protect, async (req, res) => {
         const mongoose = require('mongoose');
         const userId = new mongoose.Types.ObjectId(req.user.id);
         
-        // Find all groups this student belongs to
-        const groups = await Group.find({ 
-            students: userId, 
-            isDeleted: false 
-        });
-        if (!groups.length) {
+        // Find faculty from BOTH Group and YearRegistry
+        const [groups, registries] = await Promise.all([
+            Group.find({ students: userId, isDeleted: false }),
+            YearRegistry.find({ members: userId })
+        ]);
+
+        const facultyIds = new Set();
+        groups.forEach(g => facultyIds.add(String(g.facultyId)));
+        registries.forEach(r => r.faculties.forEach(f => facultyIds.add(String(f))));
+
+        if (facultyIds.size === 0) {
             return res.json(null);
         }
         
-        // Collect all faculty IDs for these groups
-        const facultyIds = groups.map(g => g.facultyId);
-        
-        // Find any active OTP from these faculties
+        // Find any active OTP from any allowed faculty
         const activeOtp = await OTP.findOne({ 
-            facultyId: { $in: facultyIds }, 
+            facultyId: { $in: Array.from(facultyIds) }, 
             isActive: true, 
             expiresAt: { $gt: new Date() } 
         }).sort({ createdAt: -1 });
@@ -66,15 +69,21 @@ router.post('/check-in', protect, async (req, res) => {
         const mongoose = require('mongoose');
         const userId = new mongoose.Types.ObjectId(req.user.id);
 
-        // Find group for student
-        const groups = await Group.find({ students: userId, isDeleted: false });
-        if (!groups.length) return res.status(400).json({ message: 'No team assignment found. Cannot mark attendance.' });
- 
-        const facultyIds = groups.map(g => g.facultyId);
+        // Find faculty association from both models
+        const [groups, registries] = await Promise.all([
+            Group.find({ students: userId, isDeleted: false }),
+            YearRegistry.find({ members: userId })
+        ]);
 
+        const facultyIds = new Set();
+        groups.forEach(g => facultyIds.add(String(g.facultyId)));
+        registries.forEach(r => r.faculties.forEach(f => facultyIds.add(String(f))));
+
+        if (facultyIds.size === 0) return res.status(400).json({ message: 'No faculty assignment found. Cannot mark attendance.' });
+ 
         // OTP Validation
         const validOtp = await OTP.findOne({ 
-            facultyId: { $in: facultyIds }, 
+            facultyId: { $in: Array.from(facultyIds) }, 
             otpCode: otp, 
             isActive: true, 
             expiresAt: { $gt: new Date() } 
