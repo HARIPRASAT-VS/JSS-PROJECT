@@ -8,6 +8,96 @@ import api from '../utils/api';
 
 const LEAVE_TYPES = ['Sick Leave', 'Emergency Leave', 'On Duty', 'Leave'];
 
+const getExactDateTime = (dateStr, timeStr) => {
+    const d = new Date(dateStr);
+    if (!timeStr) return d;
+    const [h, m] = timeStr.split(':');
+    d.setHours(parseInt(h, 10), parseInt(m, 10), 0, 0);
+    return d;
+};
+
+const StudentLeaveCard = ({ item, statusStyle }) => {
+    const [liveStat, setLiveStat] = useState(item.status);
+    const [countdown, setCountdown] = useState('');
+
+    useEffect(() => {
+        if (item.status !== 'Approved') return;
+        const tick = () => {
+            const now = new Date();
+            const from = getExactDateTime(item.startDate || item.fromDate, item.startTime);
+            const to = getExactDateTime(item.endDate || item.toDate, item.endTime);
+            if (now > to) {
+                setLiveStat('Expired');
+                setCountdown('');
+            } else if (now >= from && now <= to) {
+                setLiveStat('Ongoing');
+                const diffMs = to - now;
+                const d = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                const h = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+                
+                let parts = [];
+                if (d > 0) parts.push(`${d}d`);
+                if (h > 0) parts.push(`${h}h`);
+                parts.push(`${m}m`);
+                setCountdown(parts.join(' ') + ' left');
+            } else {
+                setLiveStat('Upcoming');
+                setCountdown('');
+            }
+        };
+        tick();
+        const intId = setInterval(tick, 60000);
+        return () => clearInterval(intId);
+    }, [item]);
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-4 p-5 bg-slate-50/50 rounded-2xl border border-slate-100"
+        >
+            <div className="flex-1">
+                <p className="text-sm font-bold text-slate-800">{item.type}</p>
+                <p className="text-xs text-slate-400 font-medium mt-0.5">
+                    {new Date(item.startDate).toLocaleDateString()} {item.startTime && `(${(() => {
+                        const [h, m] = item.startTime.split(':');
+                        const d = new Date(); d.setHours(h, m);
+                        return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+                    })()})`} 
+                    {' → '} 
+                    {new Date(item.endDate).toLocaleDateString()} {item.endTime && `(${(() => {
+                        const [h, m] = item.endTime.split(':');
+                        const d = new Date(); d.setHours(h, m);
+                        return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+                    })()})`}
+                </p>
+                <p className="text-xs text-slate-400 italic mt-1">"{item.reason}"</p>
+                {item.facultyId && (
+                    <p className="text-[10px] text-indigo-500 font-bold mt-1">
+                        Assigned to: {item.facultyId.firstName} {item.facultyId.lastName}
+                    </p>
+                )}
+            </div>
+            
+            <div className="flex flex-col items-end gap-1.5">
+                <span className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${
+                    liveStat === 'Ongoing' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                    liveStat === 'Expired' ? 'bg-slate-100 text-slate-500 border-slate-200' :
+                    liveStat === 'Upcoming' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' :
+                    statusStyle(liveStat)
+                }`}>
+                    {liveStat}
+                </span>
+                {countdown && (
+                    <span className="text-[10px] font-black text-blue-600 tracking-widest border border-blue-200 bg-blue-50 px-2 rounded-md">
+                        {countdown}
+                    </span>
+                )}
+            </div>
+        </motion.div>
+    );
+};
 const LeaveManagementPage = () => {
     const { user } = useContext(AuthContext);
 
@@ -284,38 +374,7 @@ const LeaveManagementPage = () => {
                                     ) : (
                                         <AnimatePresence>
                                             {history.map((item, i) => (
-                                                <motion.div
-                                                    key={item._id || i}
-                                                    initial={{ opacity: 0, y: 8 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    className="flex items-center gap-4 p-5 bg-slate-50/50 rounded-2xl border border-slate-100"
-                                                >
-                                                    <div className="flex-1">
-                                                        <p className="text-sm font-bold text-slate-800">{item.type}</p>
-                                                        <p className="text-xs text-slate-400 font-medium mt-0.5">
-                                                            {new Date(item.startDate).toLocaleDateString()} {item.startTime && `(${(() => {
-                                                                const [h, m] = item.startTime.split(':');
-                                                                const d = new Date(); d.setHours(h, m);
-                                                                return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-                                                            })()})`} 
-                                                            {' → '} 
-                                                            {new Date(item.endDate).toLocaleDateString()} {item.endTime && `(${(() => {
-                                                                const [h, m] = item.endTime.split(':');
-                                                                const d = new Date(); d.setHours(h, m);
-                                                                return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-                                                            })()})`}
-                                                        </p>
-                                                        <p className="text-xs text-slate-400 italic mt-1">"{item.reason}"</p>
-                                                        {item.facultyId && (
-                                                            <p className="text-[10px] text-indigo-500 font-bold mt-1">
-                                                                Assigned to: {item.facultyId.firstName} {item.facultyId.lastName}
-                                                            </p>
-                                                        )}
-                                                    </div>
-                                                    <span className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${statusStyle(item.status)}`}>
-                                                        {item.status}
-                                                    </span>
-                                                </motion.div>
+                                                <StudentLeaveCard key={item._id || i} item={item} statusStyle={statusStyle} />
                                             ))}
                                         </AnimatePresence>
                                     )}

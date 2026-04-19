@@ -46,11 +46,19 @@ function reducer(state, action) {
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
+const getExactDateTime = (dateStr, timeStr) => {
+    const d = new Date(dateStr);
+    if (!timeStr) return d;
+    const [h, m] = timeStr.split(':');
+    d.setHours(parseInt(h, 10), parseInt(m, 10), 0, 0);
+    return d;
+};
+
 const getLeaveStatus = (leave) => {
     if (leave.status !== 'Approved') return leave.status;
     const now = new Date();
-    const from = new Date(leave.startDate || leave.fromDate);
-    const to = new Date(leave.endDate || leave.toDate);
+    const from = getExactDateTime(leave.startDate || leave.fromDate, leave.startTime);
+    const to = getExactDateTime(leave.endDate || leave.toDate, leave.endTime);
     if (now >= from && now <= to) return 'Ongoing';
     if (now > to) return 'Expired';
     return 'Upcoming';
@@ -94,17 +102,47 @@ const StatusBadge = ({ status }) => {
 
 // ─── Leave Card ───────────────────────────────────────────────────────────────
 const LeaveCard = ({ leave, showActions, onAction, actioning }) => {
-    const liveStat = getLeaveStatus(leave);
     const isPending = leave.status === 'Pending';
     const isActioning = !!actioning[leave._id];
+
+    const [liveStat, setLiveStat] = useState(getLeaveStatus(leave));
+    const [countdown, setCountdown] = useState('');
+
+    useEffect(() => {
+        if (leave.status !== 'Approved') return;
+        const tick = () => {
+            const now = new Date();
+            const from = getExactDateTime(leave.startDate || leave.fromDate, leave.startTime);
+            const to = getExactDateTime(leave.endDate || leave.toDate, leave.endTime);
+            if (now > to) {
+                setLiveStat('Expired');
+                setCountdown('');
+            } else if (now >= from && now <= to) {
+                setLiveStat('Ongoing');
+                const diffMs = to - now;
+                const d = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                const h = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+                
+                let parts = [];
+                if (d > 0) parts.push(`${d}d`);
+                if (h > 0) parts.push(`${h}h`);
+                parts.push(`${m}m`);
+                setCountdown(parts.join(' ') + ' left');
+            } else {
+                setLiveStat('Upcoming');
+                setCountdown('');
+            }
+        };
+        tick();
+        const intId = setInterval(tick, 60000);
+        return () => clearInterval(intId);
+    }, [leave]);
 
     const studentName = leave.userId
         ? `${leave.userId.firstName} ${leave.userId.lastName}`
         : 'Unknown Student';
     const studentEmail = leave.userId?.email || '—';
-    const attendance = leave.attendancePercentageSnapshot != null
-        ? `${leave.attendancePercentageSnapshot.toFixed(1)}%`
-        : '—';
 
     return (
         <motion.div
@@ -135,6 +173,11 @@ const LeaveCard = ({ leave, showActions, onAction, actioning }) => {
                 </div>
                 <div className="flex flex-col items-end gap-2">
                     <StatusBadge status={liveStat} />
+                    {countdown && (
+                        <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-md text-[10px] font-black uppercase tracking-widest border border-blue-200">
+                            {countdown}
+                        </span>
+                    )}
                     {leave.status === 'Rejected' && leave.parentStatus === 'Rejected' && (
                         <span className="px-2 py-0.5 bg-rose-100 text-rose-700 rounded-md text-[9px] font-black uppercase tracking-widest border border-rose-200">
                             Rejected by Parent

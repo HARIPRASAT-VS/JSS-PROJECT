@@ -40,8 +40,8 @@ const TopAppBar = ({ title }) => {
     return (
         <header className="sticky top-0 w-full bg-white/70 backdrop-blur-xl flex justify-between items-center px-6 py-3 z-40 shadow-sm shadow-indigo-900/5">
             <div className="flex items-center gap-4 flex-1">
-                <div className="md:hidden">
-                     <span className="material-symbols-outlined text-indigo-900">menu</span>
+                <div className="md:hidden" onClick={() => window.dispatchEvent(new Event('toggle-mobile-nav'))}>
+                     <span className="material-symbols-outlined text-indigo-900 cursor-pointer p-1">menu</span>
                 </div>
                 
                 {/* Page Title - NEWLY ADDED VISIBILITY */}
