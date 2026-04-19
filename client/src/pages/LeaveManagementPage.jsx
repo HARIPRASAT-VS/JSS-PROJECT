@@ -195,12 +195,12 @@ const LeaveManagementPage = () => {
     const [showHistory, setShowHistory] = useState(true);
 
     return (
-        <div className="p-3 md:p-6 space-y-6 max-w-7xl mx-auto w-full relative z-10 hidden-scrollbar pb-24">
+        <div className="p-3 lg:p-6 space-y-6 max-w-7xl mx-auto w-full relative z-10 hidden-scrollbar pb-24">
             {/* Page Header */}
             <section className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
                 <div className="space-y-1">
-                    <p className="text-[#5b3eb5] font-semibold tracking-wider text-[10px] md:text-xs uppercase">Management Console</p>
-                    <h3 className="text-2xl md:text-4xl font-extrabold text-slate-800 tracking-tight">Leave Approval</h3>
+                    <p className="text-[#5b3eb5] font-semibold tracking-wider text-[10px] lg:text-xs uppercase">Management Console</p>
+                    <h3 className="text-2xl lg:text-4xl font-extrabold text-slate-800 tracking-tight">Leave Approval</h3>
                 </div>
                 <div className="flex items-center gap-2">
                     <button 
@@ -226,7 +226,7 @@ const LeaveManagementPage = () => {
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="bg-white rounded-[1.5rem] p-5 md:p-8 shadow-[0_2px_12px_rgba(0,0,0,0.04)] border border-slate-100"
+                        className="bg-white rounded-[1.5rem] p-5 lg:p-8 shadow-[0_2px_12px_rgba(0,0,0,0.04)] border border-slate-100"
                     >
                         <h4 className="text-lg font-bold text-indigo-900 mb-6 flex items-center gap-2">
                             <span className="material-symbols-outlined text-primary text-[20px]">add_circle</span>
@@ -342,7 +342,7 @@ const LeaveManagementPage = () => {
                             <button
                                 type="submit"
                                 disabled={submitting || yearFaculties.length === 0}
-                                className="w-full bg-[#5b3eb5] text-white py-3 md:py-4 rounded-xl font-bold text-xs md:text-sm shadow-sm md:shadow-lg shadow-[#5b3eb5]/20 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
+                                className="w-full bg-[#5b3eb5] text-white py-3 lg:py-4 rounded-xl font-bold text-xs lg:text-sm shadow-sm lg:shadow-lg shadow-[#5b3eb5]/20 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
                             >
                                 {submitting
                                     ? <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Submitting...</>
@@ -359,14 +359,14 @@ const LeaveManagementPage = () => {
                                 animate={{ opacity: 1, x: 0 }}
                                 className="bg-white rounded-[1.5rem] overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.04)] border border-slate-100 flex flex-col h-full min-h-[400px]"
                             >
-                                <div className="p-5 md:p-8 pb-3 md:pb-4 flex items-center justify-between border-b border-slate-50">
-                                    <h4 className="text-lg md:text-xl font-bold text-indigo-900">Leave History</h4>
+                                <div className="p-5 lg:p-8 pb-3 lg:pb-4 flex items-center justify-between border-b border-slate-50">
+                                    <h4 className="text-lg lg:text-xl font-bold text-indigo-900">Leave History</h4>
                                     <span className="bg-slate-50 text-slate-500 px-3 py-1 rounded-full text-[10px] font-bold">
                                         {history.length} Requests
                                     </span>
                                 </div>
 
-                                <div className="flex-1 overflow-y-auto p-4 md:p-8 pt-4 space-y-3 hidden-scrollbar">
+                                <div className="flex-1 overflow-y-auto p-4 lg:p-8 pt-4 space-y-3 hidden-scrollbar">
                                     {history.length === 0 ? (
                                         <div className="flex flex-col items-center justify-center py-16 text-center">
                                             <span className="material-symbols-outlined text-5xl text-slate-200 mb-4">inbox</span>
