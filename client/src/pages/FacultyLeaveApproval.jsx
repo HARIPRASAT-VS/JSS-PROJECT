@@ -133,7 +133,14 @@ const LeaveCard = ({ leave, showActions, onAction, actioning }) => {
                         <p className="text-[11px] text-slate-400 font-medium">{studentEmail}</p>
                     </div>
                 </div>
-                <StatusBadge status={liveStat} />
+                <div className="flex flex-col items-end gap-2">
+                    <StatusBadge status={liveStat} />
+                    {leave.status === 'Rejected' && leave.parentStatus === 'Rejected' && (
+                        <span className="px-2 py-0.5 bg-rose-100 text-rose-700 rounded-md text-[9px] font-black uppercase tracking-widest border border-rose-200">
+                            Rejected by Parent
+                        </span>
+                    )}
+                </div>
             </div>
 
             {/* Info grid */}
@@ -174,23 +181,34 @@ const LeaveCard = ({ leave, showActions, onAction, actioning }) => {
 
             {/* Action buttons (only for pending) */}
             {showActions && isPending && (
-                <div className="flex gap-3 pt-2 border-t border-slate-50">
-                    <button
-                        disabled={isActioning}
-                        onClick={() => onAction(leave._id, 'Approved')}
-                        className="flex-1 flex items-center justify-center gap-2 bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all border border-emerald-100 hover:border-emerald-600 hover:shadow-lg hover:shadow-emerald-600/20 disabled:opacity-40"
-                    >
-                        <span className="material-symbols-outlined text-base">check_circle</span>
-                        Approve
-                    </button>
-                    <button
-                        disabled={isActioning}
-                        onClick={() => onAction(leave._id, 'Rejected')}
-                        className="flex-1 flex items-center justify-center gap-2 bg-red-50 hover:bg-red-600 text-red-600 hover:text-white py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all border border-red-100 hover:border-red-600 hover:shadow-lg hover:shadow-red-600/20 disabled:opacity-40"
-                    >
-                        <span className="material-symbols-outlined text-base">cancel</span>
-                        Reject
-                    </button>
+                <div className="pt-2 border-t border-slate-50 relative mt-2">
+                    {leave.parentStatus === 'Pending' && (
+                        <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/40 backdrop-blur-[1px] rounded-2xl">
+                            <span className="bg-slate-800 text-white text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full shadow-md flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                                Waiting for Parent Approval
+                            </span>
+                        </div>
+                    )}
+                    
+                    <div className={`flex gap-3 ${leave.parentStatus === 'Pending' ? 'opacity-40 pointer-events-none' : ''}`}>
+                        <button
+                            disabled={isActioning || leave.parentStatus === 'Pending'}
+                            onClick={() => onAction(leave._id, 'Approved')}
+                            className="flex-1 flex items-center justify-center gap-2 bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all border border-emerald-100 hover:border-emerald-600 hover:shadow-lg hover:shadow-emerald-600/20 disabled:opacity-40"
+                        >
+                            <span className="material-symbols-outlined text-base">check_circle</span>
+                            Approve
+                        </button>
+                        <button
+                            disabled={isActioning || leave.parentStatus === 'Pending'}
+                            onClick={() => onAction(leave._id, 'Rejected')}
+                            className="flex-1 flex items-center justify-center gap-2 bg-red-50 hover:bg-red-600 text-red-600 hover:text-white py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all border border-red-100 hover:border-red-600 hover:shadow-lg hover:shadow-red-600/20 disabled:opacity-40"
+                        >
+                            <span className="material-symbols-outlined text-base">cancel</span>
+                            Reject
+                        </button>
+                    </div>
                 </div>
             )}
         </motion.div>
