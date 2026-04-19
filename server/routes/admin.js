@@ -162,7 +162,9 @@ router.delete('/groups/:id', protect, authorizeAdmin, async (req, res) => {
 // @desc    Get all blocked students
 router.get('/blocked-users', protect, authorizeAdmin, async (req, res) => {
     try {
-        const blockedUsers = await User.find({ isBlocked: true, role: 'student' }).populate('facultyId', 'firstName lastName email');
+        const blockedUsers = await User.find({ isBlocked: true, role: 'student' })
+            .populate('facultyId', 'firstName lastName email')
+            .select('firstName lastName email warningCount totalBlockCount facultyId');
         res.json(blockedUsers);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -174,8 +176,9 @@ router.get('/blocked-users', protect, authorizeAdmin, async (req, res) => {
 router.get('/unblock-requests', protect, authorizeAdmin, async (req, res) => {
     try {
         const requests = await BlockRequest.find()
-            .populate('studentId', 'firstName lastName email warningCount')
-            .populate('facultyId', 'firstName lastName');
+            .populate('studentId', 'firstName lastName email warningCount totalBlockCount')
+            .populate('facultyId', 'firstName lastName')
+            .sort({ createdAt: -1 });
         res.json(requests);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -186,21 +189,26 @@ router.get('/unblock-requests', protect, authorizeAdmin, async (req, res) => {
 // @desc    Approve or Reject an unblock request
 router.post('/unblock-resolve/:id', protect, authorizeAdmin, async (req, res) => {
     try {
-        const { status } = req.body; // 'Approved' or 'Rejected'
+        const { status, adminComment } = req.body; // 'Approved' or 'Rejected'
         const request = await BlockRequest.findById(req.params.id);
         if (!request) return res.status(404).json({ message: 'Request not found' });
 
         request.status = status;
+        if (adminComment) {
+            request.adminComment = adminComment;
+        }
         await request.save();
 
         if (status === 'Approved') {
             const student = await User.findById(request.studentId);
-            student.isBlocked = false;
-            student.warningCount = 0; // Reset warnings on unblock
-            await student.save();
+            if (student) {
+                student.isBlocked = false;
+                student.warningCount = 0; // Reset warnings on unblock
+                await student.save();
+            }
         }
 
-        res.json({ message: `Request ${status}` });
+        res.json({ message: `Request ${status} successfully.` });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

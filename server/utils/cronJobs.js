@@ -61,6 +61,9 @@ const initCronJobs = (io) => {
                     // Mark as absentee logic handled dynamically generally, but we increment warning here
                     student.warningCount += 1;
                     if (student.warningCount >= 5) {
+                        if (!student.isBlocked) {
+                            student.totalBlockCount = (student.totalBlockCount || 0) + 1;
+                        }
                         student.isBlocked = true;
                     }
                     await student.save();

@@ -268,23 +268,66 @@ router.post('/leaves/:id', protect, authorizeFaculty, async (req, res) => {
     }
 });
 
+// @route   GET api/faculty/blocked-students
+// @desc    Get blocked students assigned to this faculty
+router.get('/blocked-students', protect, authorizeFaculty, async (req, res) => {
+    try {
+        const registries = await YearRegistry.find({ faculties: req.user.id })
+            .populate({
+                path: 'members',
+                match: { isBlocked: true },
+                select: 'firstName lastName email warningCount totalBlockCount'
+            });
+        
+        const blockedMap = new Map();
+        for (const reg of registries) {
+            for (const member of reg.members) {
+                if (member) blockedMap.set(member._id.toString(), member);
+            }
+        }
+        
+        res.json({ success: true, data: Array.from(blockedMap.values()) });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// @route   GET api/faculty/unblock-history
+// @desc    Get previous unblock requests and their status
+router.get('/unblock-history', protect, authorizeFaculty, async (req, res) => {
+    try {
+        const history = await BlockRequest.find({ facultyId: req.user.id })
+            .populate('studentId', 'firstName lastName email')
+            .sort({ createdAt: -1 });
+        res.json({ success: true, data: history });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 // @route   POST api/faculty/unblock-submission
 // @desc    Submit proof to unblock a student
 router.post('/unblock-submission', protect, authorizeFaculty, upload.single('proofImage'), async (req, res) => {
     try {
-        const { studentId, reason } = req.body;
+        const { studentId, reason, facultyVerified } = req.body;
         if (!req.file) return res.status(400).json({ message: 'Proof image is required' });
+
+        // Check if there's an existing pending request
+        const existing = await BlockRequest.findOne({ studentId, status: 'Pending' });
+        if (existing) return res.status(400).json({ message: 'A request for this student is already pending admin review.' });
 
         const unblockReq = await BlockRequest.create({
             studentId,
             facultyId: req.user.id,
-            reason,
-            proofImageUrl: req.file.path // Cloudinary URL automatically returned by multer storage
+            reason: reason || 'Restoration Request',
+            facultyVerified: facultyVerified === 'true' || facultyVerified === true,
+            proofImageUrl: req.file.path,
+            status: 'Pending'
         });
 
-        res.status(201).json(unblockReq);
+        res.status(201).json({ success: true, data: unblockReq });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 });
 

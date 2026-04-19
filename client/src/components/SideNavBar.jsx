@@ -26,6 +26,7 @@ const SideNavBar = () => {
         { name: 'Leave Approval', icon: 'rule', path: '/leave' },
         { name: 'Marks', icon: 'grade', path: '/faculty/marks' },
         { name: 'View Report', icon: 'assessment', path: '/faculty/reports' },
+        { name: 'Unblock User', icon: 'lock_open', path: '/faculty/unblock' },
     ];
 
     const adminItems = [

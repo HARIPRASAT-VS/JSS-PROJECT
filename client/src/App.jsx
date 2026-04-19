@@ -20,6 +20,7 @@ import ParentDashboard from './pages/ParentDashboard';
 import ParentMarks from './pages/ParentMarks';
 import ParentLeave from './pages/ParentLeave';
 import ParentFees from './pages/ParentFees';
+import FacultyUnblockPage from './pages/FacultyUnblockPage';
 
 function App() {
   const { user } = useContext(AuthContext);
@@ -90,6 +91,12 @@ function App() {
           <Route path="/faculty/reports/:type/:testId" element={
               <ProtectedRoute allowedRoles={['faculty']}>
                   <FacultyReports />
+              </ProtectedRoute>
+          } />
+
+          <Route path="/faculty/unblock" element={
+              <ProtectedRoute allowedRoles={['faculty']}>
+                  <FacultyUnblockPage />
               </ProtectedRoute>
           } />
 

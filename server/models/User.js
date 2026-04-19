@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
     facultyId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // For students
     warningCount: { type: Number, default: 0 },
     isBlocked: { type: Boolean, default: false },
+    totalBlockCount: { type: Number, default: 0 },
     fcmToken: { type: String },
     parents: {
         type: [{
