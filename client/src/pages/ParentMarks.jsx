@@ -42,7 +42,7 @@ const ParentMarks = () => {
         <div className="min-h-screen bg-slate-50 flex">
             <SideNavBar />
             <div className="flex-1 md:ml-64 pb-20 md:pb-0">
-                <TopAppBar title={selectedCategory ? `${selectedCategory} - ${childName}` : `Marks - ${childName}`} />
+                <TopAppBar title={selectedCategory ? `${selectedCategory} - ${childName}` : `Academic Marks - ${childName}`} />
                 
                 <main className="p-4 md:p-8">
                     {!selectedCategory ? (

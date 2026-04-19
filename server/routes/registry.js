@@ -182,8 +182,28 @@ router.put('/users/:userId', protect, authorizeAdmin, async (req, res) => {
             
             const emails = parents.map(p => p.email.toLowerCase().trim());
             const emailRegex = /.+\@.+\..+/;
-            for (let em of emails) {
+            for (let i = 0; i < parents.length; i++) {
+                const p = parents[i];
+                const em = p.email.toLowerCase().trim();
+                
                 if (!emailRegex.test(em)) return res.status(400).json({ success: false, message: `Invalid parent email format: ${em}` });
+                
+                // --- ROBUST MAPPING: Ensure Parent Account Exists ---
+                let parentUser = await User.findOne({ email: em });
+                if (!parentUser) {
+                    const nameParts = (p.name || '').trim().split(' ');
+                    await User.create({
+                        email: em,
+                        firstName: nameParts[0] || 'Parent',
+                        lastName: nameParts.slice(1).join(' ') || '',
+                        role: 'parent',
+                        password: 'Password123!' // Default password
+                    });
+                } else if (parentUser.role !== 'admin') {
+                    // Update existing non-admin users to parent role if they are mapped
+                    parentUser.role = 'parent';
+                    await parentUser.save();
+                }
             }
             if (new Set(emails).size !== emails.length) {
                 return res.status(400).json({ success: false, message: 'Duplicate parent emails are not allowed for the same student' });

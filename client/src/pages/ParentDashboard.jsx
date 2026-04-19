@@ -70,7 +70,7 @@ const ParentDashboard = () => {
         <div className="min-h-screen bg-slate-50 flex">
             <SideNavBar />
             <div className="flex-1 md:ml-64 pb-20 md:pb-0">
-                <TopAppBar title={stats?.child?.name ? `Parent of ${stats.child.name}` : "Parent Portal"} />
+                <TopAppBar title={stats?.child?.name ? `Overview - ${stats.child.name}` : "Parent Overview"} />
                 
                 <main className="p-4 md:p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
                     {/* Student Profile Overview & Switcher */}

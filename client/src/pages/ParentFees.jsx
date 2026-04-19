@@ -78,7 +78,7 @@ const ParentFees = () => {
         <div className="min-h-screen bg-slate-50 flex">
             <SideNavBar />
             <div className="flex-1 md:ml-64 pb-20 md:pb-0">
-                <TopAppBar title={`Fees - ${childName}`} />
+                <TopAppBar title={`Fee Management - ${childName}`} />
                 
                 <main className="p-4 md:p-8">
                     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">

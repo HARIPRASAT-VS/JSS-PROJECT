@@ -19,6 +19,9 @@ const TopAppBar = ({ title }) => {
     const displayName = [user?.firstName, user?.lastName].filter(Boolean).join(' ') || '—';
     const initials = `${user?.firstName?.charAt(0) || ''}${user?.lastName?.charAt(0) || ''}`;
 
+    // Smart title logic
+    const displayTitle = title || (user?.role === 'parent' && user?.child?.name ? `Parent of ${user.child.name}` : roleLabel);
+
     const handleLogout = () => {
         logout();
         navigate('/auth');
@@ -40,10 +43,18 @@ const TopAppBar = ({ title }) => {
                 <div className="md:hidden">
                      <span className="material-symbols-outlined text-indigo-900">menu</span>
                 </div>
-                <div className="relative w-full max-w-md hidden sm:block">
+                
+                {/* Page Title - NEWLY ADDED VISIBILITY */}
+                <div className="hidden md:block">
+                    <h1 className="text-lg font-black text-indigo-950 truncate max-w-[300px]">
+                        {displayTitle}
+                    </h1>
+                </div>
+
+                <div className="relative w-full max-w-sm hidden lg:block ml-4">
                     <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
                     <input 
-                        className="w-full bg-slate-50/50 border-0 rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary/20 placeholder-slate-400 outline-none" 
+                        className="w-full bg-slate-50/50 border-0 rounded-full pl-10 pr-4 py-2 text-xs font-bold focus:ring-2 focus:ring-primary/20 placeholder-slate-400 outline-none" 
                         placeholder="Search academics..." 
                         type="text"
                     />
