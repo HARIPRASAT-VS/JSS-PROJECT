@@ -215,21 +215,21 @@ const FacultyMarks = () => {
                             <h2 className="text-xl font-black text-indigo-950 uppercase tracking-tight">{currentTabConf.label} Config</h2>
                         </div>
 
-                        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                        <div className="bg-white p-5 md:p-8 rounded-[2rem] border border-slate-200 shadow-xl space-y-5">
                             {/* Row 1: Test Name (Left) | Total Mark (Right) */}
-                            <div className="flex gap-4">
-                                <div className="flex-1">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">{currentTabConf.inputLabel}</label>
+                            <div className="flex flex-row gap-3 md:gap-4">
+                                <div className="flex-[2]">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5 ml-1">{currentTabConf.inputLabel}</label>
                                     <input 
                                         required
                                         value={testName}
                                         onChange={e => setTestName(e.target.value)}
                                         placeholder={currentTabConf.inputPlaceholder}
-                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-bold focus:border-indigo-500 outline-none transition-all"
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs font-bold focus:border-indigo-500 outline-none transition-all"
                                     />
                                 </div>
-                                <div className="w-28">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Total Mark</label>
+                                <div className="flex-1">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5 ml-1">Total</label>
                                     <input 
                                         required
                                         type="number"
@@ -237,20 +237,20 @@ const FacultyMarks = () => {
                                         value={totalMarks}
                                         onChange={e => setTotalMarks(e.target.value)}
                                         placeholder="Max"
-                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-bold focus:border-indigo-500 outline-none transition-all"
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs font-bold focus:border-indigo-500 outline-none transition-all placeholder:text-slate-300"
                                     />
                                 </div>
                             </div>
 
                             {/* Row 2: Test Date */}
-                            <div>
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Test Date</label>
+                            <div className="pt-1">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5 ml-1">Test Date</label>
                                 <input 
                                     required
                                     type="date"
                                     value={testDate}
                                     onChange={e => setTestDate(e.target.value)}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-bold focus:border-indigo-500 outline-none transition-all"
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs font-bold focus:border-indigo-500 outline-none transition-all"
                                 />
                             </div>
 

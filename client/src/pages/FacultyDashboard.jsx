@@ -122,18 +122,18 @@ const FacultyDashboard = () => {
                         <p className="text-indigo-200 text-[10px] md:text-xs mb-4 md:mb-6">Generate an OTP for today's attendance window.</p>
                         
                         {activeOtp ? (
-                            <div className="space-y-3 md:space-y-4">
-                                <div className="bg-white/20 backdrop-blur-md rounded-[1rem] p-3 md:p-4 text-center border border-white/10">
-                                    <p className="text-[9px] md:text-[10px] uppercase tracking-widest text-indigo-200 mb-1">Current OTP code</p>
-                                    <h4 className="text-3xl md:text-4xl font-black tracking-widest">{activeOtp}</h4>
-                                    <p className="text-[9px] md:text-[10px] font-bold text-indigo-50 mt-1.5 bg-black/10 inline-block px-3 py-0.5 md:py-1 rounded-full">
-                                        Expires in: <span className="font-mono text-white">{timeLeft}</span>
+                            <div className="space-y-2 md:space-y-3">
+                                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-2.5 md:p-4 text-center border border-white/10">
+                                    <p className="text-[8px] md:text-[10px] uppercase tracking-widest text-indigo-100 mb-0.5 opacity-80">Current OTP</p>
+                                    <h4 className="text-2xl md:text-4xl font-black tracking-[0.2em]">{activeOtp}</h4>
+                                    <p className="text-[8px] md:text-[10px] font-bold text-indigo-50 mt-1 md:mt-2 bg-black/10 inline-block px-2.5 py-0.5 rounded-full">
+                                        Expires: <span className="font-mono text-white">{timeLeft}</span>
                                     </p>
                                 </div>
                                 <button 
                                     onClick={handleStopSharing}
                                     disabled={loading}
-                                    className="w-full bg-red-500/20 text-red-100 border border-red-500/50 py-3 rounded-xl font-bold text-sm hover:bg-red-500/40 transition-colors shadow-sm disabled:opacity-50"
+                                    className="w-full bg-red-500/10 text-red-200 border border-red-500/30 py-2.5 rounded-xl font-bold text-xs hover:bg-red-500/20 transition-colors disabled:opacity-50"
                                 >
                                     {loading ? 'Stopping...' : 'Stop Sharing'}
                                 </button>

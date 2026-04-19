@@ -160,13 +160,13 @@ const LeaveCard = ({ leave, showActions, onAction, actioning }) => {
 
             {/* Header row */}
             <div className="flex justify-between items-start gap-4">
-                <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-black text-sm shrink-0">
+                <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-black text-sm shrink-0">
                         {studentName[0] || 'S'}
                     </div>
-                    <div>
-                        <h3 className="text-sm font-black text-slate-900">{studentName}</h3>
-                        <p className="text-[11px] text-slate-400 font-medium">{studentEmail}</p>
+                    <div className="min-w-0">
+                        <h3 className="text-sm font-black text-slate-900 truncate">{studentName}</h3>
+                        <p className="text-[10px] text-slate-400 font-medium truncate">{studentEmail}</p>
                     </div>
                 </div>
                 <div className="flex flex-col items-end gap-2">
@@ -184,32 +184,27 @@ const LeaveCard = ({ leave, showActions, onAction, actioning }) => {
                 </div>
             </div>
 
-            {/* Info grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-2xl">
-                <div>
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Leave Type</p>
-                    <p className="text-xs font-bold text-slate-700">{leave.type || '—'}</p>
+            {/* Info grid - Optimized for mobile fit */}
+            <div className="grid grid-cols-2 gap-2 md:gap-4 bg-slate-50/80 p-3 md:p-4 rounded-2xl border border-slate-100">
+                <div className="min-w-0">
+                    <p className="text-[8px] md:text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Type</p>
+                    <p className="text-[11px] md:text-sm font-bold text-slate-700 truncate">{leave.type || 'General'}</p>
                 </div>
-                <div className="col-span-2">
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Duration</p>
-                    <p className="text-xs font-bold text-slate-700 leading-relaxed">
-                        {formatDate(leave.startDate)} {leave.startTime && <span className="text-[10px] text-slate-500 bg-slate-200 px-1 py-0.5 rounded">{formatTimeString(leave.startTime)}</span>} 
-                        <span className="mx-2 text-slate-400">→</span> 
-                        {formatDate(leave.endDate)} {leave.endTime && <span className="text-[10px] text-slate-500 bg-slate-200 px-1 py-0.5 rounded">{formatTimeString(leave.endTime)}</span>}
-                    </p>
-                </div>
-                <div>
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Live Attendance</p>
-                    <p className={`text-xs font-black ${
+                <div className="min-w-0 text-right">
+                    <p className="text-[8px] md:text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Attendance</p>
+                    <p className={`text-[11px] md:text-sm font-black ${
                          leave.liveAttendance === null ? 'text-slate-500' :
                          parseFloat(leave.liveAttendance) < 75 ? 'text-red-600' :
-                         parseFloat(leave.liveAttendance) < 85 ? 'text-amber-600' :
                          'text-emerald-600'
                     }`}>{leave.liveAttendance ? `${leave.liveAttendance}%` : '—'}</p>
                 </div>
-                <div>
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Submitted</p>
-                    <p className="text-xs font-bold text-slate-700">{formatDate(leave.createdAt)}</p>
+                <div className="col-span-2 pt-1 border-t border-slate-200/50 mt-1">
+                    <p className="text-[8px] md:text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Duration</p>
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] md:text-sm font-bold text-slate-700">
+                        <span>{formatDate(leave.startDate)}</span>
+                        <span className="text-slate-300">→</span>
+                        <span>{formatDate(leave.endDate)}</span>
+                    </div>
                 </div>
             </div>
 
@@ -328,7 +323,9 @@ const FacultyLeaveApproval = () => {
     };
 
     return (
-        <div className="p-2 md:p-6 space-y-4 md:space-y-6 max-w-7xl mx-auto w-full relative z-10 pb-24">
+        <div className="p-2 md:p-6 space-y-4 md:space-y-6 max-w-7xl mx-auto w-full relative z-10 pb-24 overflow-x-hidden">
+            {/* DEBUG TAG - REMOVE LATER */}
+            <div className="fixed top-20 right-2 z-50 bg-indigo-600 text-white text-[8px] px-2 py-0.5 rounded-full font-bold uppercase shadow-lg pointer-events-none">Mobile UI V2</div>
 
             {/* PAGE HEADER */}
             <section className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -347,8 +344,8 @@ const FacultyLeaveApproval = () => {
                 </button>
             </section>
 
-            {/* STATS STRIP */}
-            <div className="grid grid-cols-3 gap-1.5 md:gap-4 px-0.5">
+            {/* STATS STRIP - Scrollable on very small screens */}
+            <div className="flex md:grid md:grid-cols-3 gap-2 md:gap-4 overflow-x-auto no-scrollbar px-0.5 py-1">
                 {TABS.map(tab => {
                     const tabStyle = {
                         Pending:  { bg: 'bg-amber-50',   text: 'text-amber-700',   border: 'border-amber-100',  dot: 'bg-amber-500' },
@@ -356,11 +353,11 @@ const FacultyLeaveApproval = () => {
                         Rejected: { bg: 'bg-red-50',     text: 'text-red-600',     border: 'border-red-100',    dot: 'bg-red-500' },
                     }[tab.key];
                     return (
-                        <div key={tab.key} className={`${tabStyle.bg} border ${tabStyle.border} p-2 md:p-5 rounded-xl md:rounded-2xl flex flex-col md:flex-row items-center md:items-start gap-1 md:gap-4 text-center md:text-left`}>
-                            <span className={`material-symbols-outlined text-[18px] md:text-2xl ${tabStyle.text}`}>{tab.icon}</span>
+                        <div key={tab.key} className={`${tabStyle.bg} border ${tabStyle.border} p-2.5 md:p-5 rounded-2xl flex md:flex-row items-center md:items-start gap-2 md:gap-4 text-center md:text-left min-w-[100px] flex-1`}>
+                            <span className={`material-symbols-outlined text-lg md:text-2xl ${tabStyle.text}`}>{tab.icon}</span>
                             <div className="min-w-0">
                                 <p className={`text-sm md:text-3xl font-black ${tabStyle.text} leading-none`}>{counts[tab.key]}</p>
-                                <p className="text-[7px] md:text-[10px] text-slate-500 font-black uppercase tracking-widest leading-tight mt-0.5 truncate">{tab.label.split(' ')[0]}</p>
+                                <p className="text-[8px] md:text-[10px] text-slate-500 font-black uppercase tracking-widest leading-tight mt-1 truncate">{tab.label.split(' ')[0]}</p>
                             </div>
                         </div>
                     );

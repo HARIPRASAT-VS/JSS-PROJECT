@@ -20,12 +20,12 @@ const RenderSelection = ({ navigate }) => (
                 animate={{ opacity: 1, scale: 1 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate(`/faculty/reports/${rt.id}`)}
-                className="bg-white p-4 md:p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col items-center text-center gap-2 group"
+                className="bg-white p-4 md:p-8 rounded-[1.5rem] md:rounded-3xl border border-slate-100 shadow-sm flex flex-col items-center text-center gap-2 group hover:border-indigo-200 transition-all"
             >
                 <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center transition-colors group-hover:bg-indigo-600 group-hover:text-white">
-                    <span className="material-symbols-outlined text-2xl md:text-4xl">{rt.icon}</span>
+                    <span className="material-symbols-outlined text-2xl md:text-3xl">{rt.icon}</span>
                 </div>
-                <h3 className="text-[11px] md:text-lg font-black text-indigo-950 uppercase tracking-tight">{rt.label}</h3>
+                <h3 className="text-[10px] md:text-lg font-black text-indigo-950 uppercase tracking-tight">{rt.label}</h3>
             </motion.button>
         ))}
     </div>
@@ -108,27 +108,27 @@ const RenderDetails = ({ details, type, loading, error, searchQuery, setSearchQu
             </div>
         </div>
 
-        <div className="flex flex-col gap-4">
-            <div className="bg-white p-1.5 md:p-2 rounded-2xl md:rounded-[2rem] border border-slate-100 shadow-sm flex items-center gap-1.5">
+        <div className="flex flex-col gap-3">
+            <div className="bg-white p-1.5 md:p-2 rounded-xl md:rounded-[2rem] border border-slate-100 shadow-sm flex items-center gap-1.5 overflow-hidden">
                 <div className="flex-1 relative group">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-300 text-base">search</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-300 text-sm">search</span>
                     <input 
                         type="text"
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
-                        placeholder="Search by student name..."
-                        className="w-full bg-white border-0 rounded-xl py-3 pl-10 pr-8 text-xs font-bold outline-none transition-all placeholder:text-slate-200"
+                        placeholder="Search student..."
+                        className="w-full bg-white border-0 rounded-lg py-2 pl-8 pr-4 text-[11px] font-bold outline-none transition-all placeholder:text-slate-200"
                     />
                 </div>
-                <div className="h-8 w-px bg-slate-100 mx-1" />
-                <div className="flex items-center gap-1.5 pr-1">
-                    <select value={attendanceFilter} onChange={e => setAttendanceFilter(e.target.value)} className="bg-slate-50 border-0 rounded-xl px-2 py-2 text-[8px] font-black uppercase tracking-widest outline-none">
-                        <option value="All">All Attendance</option>
+                <div className="h-6 w-px bg-slate-100 mx-0.5" />
+                <div className="flex items-center gap-1 pr-1 shrink-0">
+                    <select value={attendanceFilter} onChange={e => setAttendanceFilter(e.target.value)} className="bg-slate-50 border-0 rounded-lg px-2 py-1.5 text-[8px] font-black uppercase tracking-widest outline-none">
+                        <option value="All">All</option>
                         <option value="Present">Present</option>
                         <option value="Absent">Absent</option>
                     </select>
-                    <button onClick={() => setSortOrder(prev => prev === 'High' ? 'Low' : 'High')} className="bg-indigo-50 text-indigo-600 rounded-xl p-2">
-                        <span className="material-symbols-outlined text-[16px]">{sortOrder === 'High' ? 'arrow_downward' : 'arrow_upward'}</span>
+                    <button onClick={() => setSortOrder(prev => prev === 'High' ? 'Low' : 'High')} className="bg-indigo-50 text-indigo-600 rounded-lg p-1.5 shrink-0">
+                        <span className="material-symbols-outlined text-[14px]">{sortOrder === 'High' ? 'arrow_downward' : 'arrow_upward'}</span>
                     </button>
                 </div>
             </div>
