@@ -6,6 +6,7 @@ import BottomNavBar from '../components/BottomNavBar';
 
 const ParentMarks = () => {
     const [tests, setTests] = useState([]);
+    const [childName, setChildName] = useState('');
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedTest, setSelectedTest] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -13,8 +14,13 @@ const ParentMarks = () => {
     useEffect(() => {
         const fetchMarks = async () => {
             try {
-                const res = await API.get('/parent/marks');
-                setTests(res.data);
+                // Fetch dashboard too to get student name for header
+                const [marksRes, dashRes] = await Promise.all([
+                    API.get('/parent/marks'),
+                    API.get('/parent/dashboard')
+                ]);
+                setTests(marksRes.data);
+                setChildName(dashRes.data.child?.name || '');
             } catch (err) {
                 console.error('Error fetching marks:', err);
             } finally {
@@ -36,7 +42,7 @@ const ParentMarks = () => {
         <div className="min-h-screen bg-slate-50 flex">
             <SideNavBar />
             <div className="flex-1 md:ml-64 pb-20 md:pb-0">
-                <TopAppBar title={selectedCategory || "Marks Module"} />
+                <TopAppBar title={selectedCategory ? `${selectedCategory} - ${childName}` : `Marks - ${childName}`} />
                 
                 <main className="p-4 md:p-8">
                     {!selectedCategory ? (

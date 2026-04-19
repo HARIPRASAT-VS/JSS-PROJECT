@@ -211,16 +211,18 @@ router.get('/me', protect, async (req, res) => {
             role: user.role
         };
 
-        // If parent, find their child
+        // If parent, find their children
         if (user.role === 'parent') {
-            const child = await User.findOne({ 
+            const children = await User.find({ 
                 'parents.email': user.email.toLowerCase() 
             }).select('firstName lastName _id');
-            if (child) {
-                responseData.child = {
-                    _id: child._id,
-                    name: `${child.firstName} ${child.lastName}`
-                };
+            responseData.children = children.map(child => ({
+                _id: child._id,
+                name: `${child.firstName} ${child.lastName}`
+            }));
+            // Provide a default active child if children exist
+            if (responseData.children.length > 0) {
+                responseData.child = responseData.children[0];
             }
         }
 

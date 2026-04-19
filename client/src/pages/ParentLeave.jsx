@@ -6,12 +6,17 @@ import BottomNavBar from '../components/BottomNavBar';
 
 const ParentLeave = () => {
     const [leaves, setLeaves] = useState([]);
+    const [childName, setChildName] = useState('');
     const [loading, setLoading] = useState(true);
 
     const fetchLeaves = async () => {
         try {
-            const res = await API.get('/parent/leave');
-            setLeaves(res.data);
+            const [leavesRes, dashRes] = await Promise.all([
+                API.get('/parent/leave'),
+                API.get('/parent/dashboard')
+            ]);
+            setLeaves(leavesRes.data);
+            setChildName(dashRes.data.child?.name || '');
         } catch (err) {
             console.error('Error fetching leaves:', err);
         } finally {
@@ -36,7 +41,7 @@ const ParentLeave = () => {
         <div className="min-h-screen bg-slate-50 flex">
             <SideNavBar />
             <div className="flex-1 md:ml-64 pb-20 md:pb-0">
-                <TopAppBar title="Leave Authorizations" />
+                <TopAppBar title={`Leave - ${childName}`} />
                 
                 <main className="p-4 md:p-8">
                     <div className="max-w-4xl mx-auto space-y-6">

@@ -6,24 +6,72 @@ const AcademicTest = require('../models/AcademicTest');
 const LeaveRequest = require('../models/LeaveRequest');
 const FeeRecord = require('../models/FeeRecord');
 const Group = require('../models/Group');
+const YearRegistry = require('../models/YearRegistry');
 const { protect } = require('../middleware/auth');
 
 // Helper: Ensure user is a parent and find their child (more robust)
-const getChildId = async (parentEmail) => {
+const getChildId = async (req) => {
+    const parentEmail = req.user.email;
+    const requestedChildId = req.headers['x-child-id'];
+    
     if (!parentEmail) return null;
     const emailToSearch = parentEmail.trim().toLowerCase();
+
+    // If a specific child is requested, verify they belong to this parent
+    if (requestedChildId && requestedChildId !== 'undefined' && requestedChildId !== 'null') {
+        const child = await User.findOne({ 
+            _id: requestedChildId,
+            'parents.email': { $regex: new RegExp(`^${emailToSearch}$`, 'i') } 
+        }).select('_id firstName lastName email parents');
+        if (child) return child;
+    }
+
+    // Default: find the first child associated with this parent email
     const child = await User.findOne({ 
         'parents.email': { $regex: new RegExp(`^${emailToSearch}$`, 'i') } 
     }).select('_id firstName lastName email parents');
+    
     return child || null;
 };
+
+// @route   GET api/parent/children
+// @desc    Get all children associated with this parent
+router.get('/children', protect, async (req, res) => {
+    try {
+        if (req.user.role !== 'parent') return res.status(403).json({ message: 'Access denied' });
+        
+        const parentEmail = req.user.email.trim().toLowerCase();
+        const children = await User.find({ 
+            'parents.email': { $regex: new RegExp(`^${parentEmail}$`, 'i') } 
+        }).select('_id firstName lastName email');
+        
+        // Find registry year for each child
+        const childrenWithYear = await Promise.all(children.map(async (child) => {
+            const [group, registry] = await Promise.all([
+                Group.findOne({ students: child._id, isDeleted: false }),
+                YearRegistry.findOne({ members: child._id })
+            ]);
+            const year = group ? group.year : (registry ? registry.year : 'Unassigned');
+            return {
+                _id: child._id,
+                name: `${child.firstName} ${child.lastName}`,
+                email: child.email,
+                year
+            };
+        }));
+
+        res.json(childrenWithYear);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
 // @route   GET api/parent/dashboard
 router.get('/dashboard', protect, async (req, res) => {
     try {
         if (req.user.role !== 'parent') return res.status(403).json({ message: 'Access denied' });
         
-        const child = await getChildId(req.user.email);
+        const child = await getChildId(req);
         if (!child) return res.status(404).json({ message: 'Child not found' });
         const childId = child._id;
         
@@ -46,6 +94,7 @@ router.get('/dashboard', protect, async (req, res) => {
   
         res.json({
             child: {
+                _id: childId,
                 name: (child.firstName + ' ' + (child.lastName || '')).trim() || 'Assigned Student',
                 email: child.email || 'N/A'
             },
@@ -65,8 +114,9 @@ router.get('/dashboard', protect, async (req, res) => {
 // @route   GET api/parent/fees
 router.get('/fees', protect, async (req, res) => {
     try {
-        const childId = await getChildId(req.user.email);
-        const feeRecord = await FeeRecord.findOne({ studentId: childId });
+        const child = await getChildId(req);
+        if (!child) return res.status(404).json({ message: 'Child not found' });
+        const feeRecord = await FeeRecord.findOne({ studentId: child._id });
         res.json(feeRecord || { college: {}, hostel: {}, mess: {} });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -76,11 +126,12 @@ router.get('/fees', protect, async (req, res) => {
 // @route   GET api/parent/marks
 router.get('/marks', protect, async (req, res) => {
     try {
-        const childId = await getChildId(req.user.email);
+        const child = await getChildId(req);
+        if (!child) return res.status(404).json({ message: 'Child not found' });
         
         // Find all tests where this child has a score
         const tests = await AcademicTest.find({
-            'scores.studentId': childId
+            'scores.studentId': child._id
         }).select('testName testType testDate totalMarks subject scores.$');
 
         res.json(tests);
@@ -92,7 +143,7 @@ router.get('/marks', protect, async (req, res) => {
 // @route   GET api/parent/leave
 router.get('/leave', protect, async (req, res) => {
     try {
-        const child = await getChildId(req.user.email);
+        const child = await getChildId(req);
         if (!child) return res.json([]);
         const childId = child._id;
         
@@ -110,9 +161,10 @@ router.get('/leave', protect, async (req, res) => {
 router.patch('/leave/:id/:action', protect, async (req, res) => {
     try {
         const { id, action } = req.params; // action = approve or reject
-        const childId = await getChildId(req.user.email);
+        const child = await getChildId(req);
+        if (!child) return res.status(404).json({ message: 'Child not found' });
         
-        const leave = await LeaveRequest.findOne({ _id: id, userId: childId });
+        const leave = await LeaveRequest.findOne({ _id: id, userId: child._id });
         if (!leave) return res.status(404).json({ message: 'Leave request not found' });
 
         leave.parentStatus = action === 'approve' ? 'Approved' : 'Rejected';
@@ -130,3 +182,4 @@ router.patch('/leave/:id/:action', protect, async (req, res) => {
 });
 
 module.exports = router;
+

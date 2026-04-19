@@ -68,6 +68,11 @@ app.use('/api/registry', registryRoutes);
 app.use('/api/parent', parentRoutes);
 app.use('/api/fee', feeRoutes);
 
+// Diagnostic Route
+app.get('/api/health', (req, res) => {
+    res.json({ status: 'OK', version: '2026-04-18-v2', timestamp: new Date() });
+});
+
 // Database Connection
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('Connected to MongoDB Atlas'))

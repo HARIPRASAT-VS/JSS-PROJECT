@@ -7,21 +7,26 @@ import BottomNavBar from '../components/BottomNavBar';
 
 const ParentFees = () => {
     const [fees, setFees] = useState(null);
+    const [childName, setChildName] = useState('');
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchFees = async () => {
+        const fetchData = async () => {
             try {
-                const res = await API.get('/parent/fees');
-                setFees(res.data);
+                const [feesRes, dashRes] = await Promise.all([
+                    API.get('/parent/fees'),
+                    API.get('/parent/dashboard')
+                ]);
+                setFees(feesRes.data);
+                setChildName(dashRes.data.child?.name || '');
             } catch (err) {
                 console.error('Error fetching fees:', err);
             } finally {
                 setLoading(false);
             }
         };
-        fetchFees();
+        fetchData();
     }, []);
 
     const FeeBlock = ({ title, icon, color, total, paid, balance }) => (
@@ -73,7 +78,7 @@ const ParentFees = () => {
         <div className="min-h-screen bg-slate-50 flex">
             <SideNavBar />
             <div className="flex-1 md:ml-64 pb-20 md:pb-0">
-                <TopAppBar title="Fee Management" />
+                <TopAppBar title={`Fees - ${childName}`} />
                 
                 <main className="p-4 md:p-8">
                     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
