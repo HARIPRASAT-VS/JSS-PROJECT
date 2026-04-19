@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import API from '../utils/api';
-import TopAppBar from '../components/TopAppBar';
-import SideNavBar from '../components/SideNavBar';
-import BottomNavBar from '../components/BottomNavBar';
 
 const ParentMarks = () => {
     const [tests, setTests] = useState([]);
@@ -53,111 +50,90 @@ const ParentMarks = () => {
     );
 
     return (
-        <div className="min-h-screen bg-slate-50 flex">
-            <SideNavBar />
-            <div className="flex-1 md:ml-64 pb-20 md:pb-0">
-                <TopAppBar title={selectedCategory
-                    ? `${categories.find(c => c.id === selectedCategory)?.name || selectedCategory} — ${childName}`
-                    : `Academic Marks — ${childName}`}
-                />
+        <div className="p-3 md:p-6 space-y-4 max-w-7xl mx-auto w-full relative z-10 hidden-scrollbar pb-24">
+            {/* Header section (replaces TopAppBar context) */}
+            <div className="mb-4">
+                <button 
+                    onClick={() => {
+                        if (selectedCategory) {
+                            setSelectedCategory(null);
+                            setSelectedTest(null);
+                        } else {
+                            window.history.back();
+                        }
+                    }}
+                    className="flex md:hidden items-center text-indigo-600 font-bold text-xs mb-2 bg-indigo-50 px-3 py-1.5 w-fit rounded-full"
+                >
+                    <span className="material-symbols-outlined text-[14px] mr-1">arrow_back</span>
+                    {selectedCategory ? 'Back to Categories' : 'Back'}
+                </button>
 
-                <main className="p-4 md:p-8">
-                    {error && (
-                        <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-sm font-bold flex items-center gap-3">
-                            <span className="material-symbols-outlined">error</span>
-                            {error}
-                        </div>
-                    )}
+                <h1 className="text-2xl md:text-3xl font-black text-indigo-900 tracking-tighter">
+                    {selectedCategory ? categories.find(c => c.id === selectedCategory)?.name : 'Academic Marks'}
+                </h1>
+                <p className="text-on-surface-variant font-medium mt-1 text-xs md:text-sm">
+                    {childName}'s {selectedCategory ? 'Performance' : 'Report'}
+                </p>
+            </div>
 
-                    {!selectedCategory ? (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            {categories.map((cat) => {
-                                const count = tests.filter(t => t.testType === cat.id).length;
-                                return (
-                                    <button
-                                        key={cat.id}
-                                        onClick={() => setSelectedCategory(cat.id)}
-                                        className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 flex flex-col items-center gap-6 hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300 group w-full"
-                                    >
-                                        <div className={`w-16 h-16 rounded-2xl ${cat.color} flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform`}>
-                                            <span className="material-symbols-outlined text-3xl">{cat.icon}</span>
-                                        </div>
-                                        <div className="text-center">
-                                            <h3 className="text-lg font-bold text-slate-800 tracking-tight">{cat.name}</h3>
-                                            <p className="text-slate-400 text-xs font-medium uppercase mt-1 tracking-widest">
-                                                {count} record{count !== 1 ? 's' : ''}
-                                            </p>
-                                        </div>
-                                    </button>
-                                );
-                            })}
+            {error && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-100 rounded-xl text-red-600 text-xs font-bold flex items-center gap-2">
+                    <span className="material-symbols-outlined text-[16px]">error</span>
+                    {error}
+                </div>
+            )}
+
+            {!selectedCategory ? (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    {categories.map((cat) => {
+                        const count = tests.filter(t => t.testType === cat.id).length;
+                        return (
+                            <button
+                                key={cat.id}
+                                onClick={() => setSelectedCategory(cat.id)}
+                                className="bg-white rounded-[1.5rem] p-5 shadow-sm border border-slate-100 flex items-center gap-4 hover:shadow-md transition-all duration-300 w-full text-left focus:outline-none focus:ring-2 focus:ring-indigo-100 active:scale-[0.98]"
+                            >
+                                <div className={`w-14 h-14 rounded-[1rem] ${cat.color} flex items-center justify-center text-white shadow-sm shrink-0`}>
+                                    <span className="material-symbols-outlined text-[28px]">{cat.icon}</span>
+                                </div>
+                                <div>
+                                    <h3 className="text-base font-bold text-slate-800 tracking-tight">{cat.name}</h3>
+                                    <p className="text-slate-400 text-[10px] font-bold uppercase mt-0.5 tracking-widest">
+                                        {count} record{count !== 1 ? 's' : ''}
+                                    </p>
+                                </div>
+                                <span className="material-symbols-outlined text-slate-300 ml-auto">chevron_right</span>
+                            </button>
+                        );
+                    })}
+                </div>
+            ) : (
+                <div className="space-y-4 animate-in fade-in duration-300">
+                    <button
+                        onClick={() => { setSelectedCategory(null); setSelectedTest(null); }}
+                        className="hidden md:flex items-center gap-2 text-indigo-600 font-bold text-sm hover:gap-3 transition-all"
+                    >
+                        <span className="material-symbols-outlined">arrow_back</span>
+                        Back to Categories
+                    </button>
+
+                    {filteredTests.length === 0 ? (
+                        <div className="py-16 text-center space-y-3 bg-white rounded-[1.5rem] border border-slate-100 shadow-sm">
+                            <div className="w-12 h-12 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mx-auto">
+                                <span className="material-symbols-outlined text-[24px]">inventory_2</span>
+                            </div>
+                            <p className="text-slate-400 font-medium text-xs">No records available.</p>
                         </div>
                     ) : (
-                        <div className="space-y-6 animate-in fade-in duration-300">
-                            <button
-                                onClick={() => { setSelectedCategory(null); setSelectedTest(null); }}
-                                className="flex items-center gap-2 text-indigo-600 font-bold text-sm hover:gap-3 transition-all"
-                            >
-                                <span className="material-symbols-outlined">arrow_back</span>
-                                Back to Categories
-                            </button>
-
-                            {filteredTests.length === 0 ? (
-                                <div className="py-20 text-center space-y-4 bg-white rounded-3xl border border-slate-100">
-                                    <div className="w-16 h-16 bg-slate-100 text-slate-300 rounded-full flex items-center justify-center mx-auto">
-                                        <span className="material-symbols-outlined text-4xl">inventory_2</span>
-                                    </div>
-                                    <p className="text-slate-400 font-medium">No tests found in this category.</p>
-                                </div>
-                            ) : (
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    {filteredTests.map((test) => {
-                                        const score = getScore(test);
-                                        const isSelected = selectedTest?._id === test._id;
-                                        return (
-                                            <div
-                                                key={test._id}
-                                                onClick={() => setSelectedTest(isSelected ? null : test)}
-                                                className={`p-6 rounded-3xl cursor-pointer transition-all duration-300 border ${
-                                                    isSelected
-                                                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-xl shadow-indigo-600/20'
-                                                    : 'bg-white text-slate-800 border-slate-100 hover:border-indigo-300 shadow-sm hover:shadow-md'
-                                                }`}
-                                            >
-                                                <div className="flex justify-between items-start mb-4">
-                                                    <h4 className="font-bold text-lg leading-tight">{test.testName}</h4>
-                                                    <span className={`text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-tighter ${isSelected ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'}`}>
-                                                        {test.testType}
-                                                    </span>
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <div className={`flex items-center gap-2 text-sm ${isSelected ? 'opacity-80' : 'text-slate-500'}`}>
-                                                        <span className="material-symbols-outlined text-sm">calendar_month</span>
-                                                        <span>{test.testDate ? new Date(test.testDate).toLocaleDateString('en-IN') : 'N/A'}</span>
-                                                    </div>
-                                                    <div className={`flex items-center gap-2 text-sm ${isSelected ? 'opacity-80' : 'text-slate-500'}`}>
-                                                        <span className="material-symbols-outlined text-sm">analytics</span>
-                                                        <span>
-                                                            {score
-                                                                ? score.isAbsent
-                                                                    ? 'Absent'
-                                                                    : `${score.value} / ${test.totalMarks}`
-                                                                : `Out of ${test.totalMarks}`
-                                                            }
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            )}
-
-                            {selectedTest && (() => {
-                                const score = getScore(selectedTest);
-                                const percentage = score && !score.isAbsent && selectedTest.totalMarks > 0
-                                    ? ((score.value / selectedTest.totalMarks) * 100).toFixed(1)
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                            {filteredTests.map((test) => {
+                                const score = getScore(test);
+                                const isSelected = selectedTest?._id === test._id;
+                                
+                                const percentage = score && !score.isAbsent && test.totalMarks > 0
+                                    ? ((score.value / test.totalMarks) * 100).toFixed(1)
                                     : null;
+                                    
                                 const scoreColor = (!score || score.isAbsent)
                                     ? 'text-rose-500'
                                     : percentage >= 75
@@ -167,67 +143,91 @@ const ParentMarks = () => {
                                     : 'text-rose-500';
 
                                 return (
-                                    <div className="mt-4 bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm animate-in zoom-in-95 duration-300">
-                                        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-                                            <div>
-                                                <span className="text-indigo-600 font-bold text-xs uppercase tracking-widest">{selectedTest.testType}</span>
-                                                <h3 className="text-2xl font-black text-slate-800 mt-1">{selectedTest.testName}</h3>
-                                                {selectedTest.testDate && (
-                                                    <p className="text-slate-400 text-sm mt-2 flex items-center gap-1">
-                                                        <span className="material-symbols-outlined text-sm">calendar_month</span>
-                                                        {new Date(selectedTest.testDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
-                                                    </p>
-                                                )}
+                                    <div
+                                        key={test._id}
+                                        className={`rounded-[1.5rem] overflow-hidden transition-all duration-300 border ${
+                                            isSelected
+                                            ? 'bg-white border-indigo-200 shadow-lg shadow-indigo-500/10'
+                                            : 'bg-white border-slate-100 shadow-sm hover:border-indigo-100 cursor-pointer'
+                                        }`}
+                                    >
+                                        <div 
+                                            onClick={() => setSelectedTest(isSelected ? null : test)}
+                                            className={`p-4 md:p-5 flex justify-between items-center ${isSelected ? 'bg-indigo-50/50' : 'active:bg-slate-50'}`}
+                                        >
+                                            <div className="flex-1">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <span className="material-symbols-outlined text-[14px] text-slate-400">calendar_today</span>
+                                                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                                                        {test.testDate ? new Date(test.testDate).toLocaleDateString('en-IN') : 'N/A'}
+                                                    </span>
+                                                </div>
+                                                <h4 className="font-bold text-sm md:text-base text-slate-800 leading-tight pr-2">{test.testName}</h4>
                                             </div>
+                                            
+                                            <div className="flex flex-col items-end gap-1 select-none">
+                                                <div className="px-2 py-1 bg-slate-50 rounded text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                                                    {score ? (score.isAbsent ? 'AB' : `${score.value}/${test.totalMarks}`) : `Max ${test.totalMarks}`}
+                                                </div>
+                                                <span className="material-symbols-outlined text-slate-300 text-[18px] transition-transform duration-300">
+                                                    {isSelected ? 'expand_less' : 'expand_more'}
+                                                </span>
+                                            </div>
+                                        </div>
 
-                                            <div className="flex gap-4 flex-wrap">
-                                                <div className="text-center bg-indigo-50 px-6 py-4 rounded-2xl min-w-[100px]">
-                                                    <p className="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-1">Scored</p>
-                                                    <p className={`text-4xl font-black ${scoreColor}`}>
-                                                        {!score ? '—' : score.isAbsent ? 'AB' : score.value}
-                                                    </p>
+                                        {/* Inline Accordion Content */}
+                                        {isSelected && (
+                                            <div className="p-4 md:p-5 border-t border-slate-100 bg-white animate-in slide-in-from-top-2 duration-200">
+                                                <div className="grid grid-cols-2 gap-3 mb-4">
+                                                    <div className="bg-indigo-50 rounded-xl p-3 flex flex-col items-center justify-center text-center">
+                                                        <p className="text-[9px] font-bold text-indigo-400 uppercase tracking-widest mb-1">Scored</p>
+                                                        <p className={`text-2xl md:text-3xl font-black ${scoreColor}`}>
+                                                            {!score ? '—' : score.isAbsent ? 'AB' : score.value}
+                                                        </p>
+                                                    </div>
+                                                    <div className="bg-slate-50 rounded-xl p-3 flex flex-col items-center justify-center text-center">
+                                                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Limit</p>
+                                                        <p className="text-2xl md:text-3xl font-black text-slate-700">{test.totalMarks}</p>
+                                                    </div>
                                                 </div>
-                                                <div className="text-center bg-slate-50 px-6 py-4 rounded-2xl min-w-[100px]">
-                                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Total</p>
-                                                    <p className="text-4xl font-black text-slate-700">{selectedTest.totalMarks}</p>
-                                                </div>
-                                                {percentage !== null && (
-                                                    <div className="text-center bg-slate-50 px-6 py-4 rounded-2xl min-w-[100px]">
-                                                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Percent</p>
-                                                        <p className={`text-4xl font-black ${scoreColor}`}>{percentage}%</p>
+                                                
+                                                {percentage !== null && score && !score.isAbsent && (
+                                                    <div className="flex items-center justify-between bg-slate-50 px-4 py-3 rounded-xl">
+                                                        <div className="flex items-center gap-2">
+                                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+                                                                percentage >= 75 ? 'bg-emerald-100 text-emerald-600' :
+                                                                percentage >= 50 ? 'bg-amber-100 text-amber-600' :
+                                                                'bg-rose-100 text-rose-600'
+                                                            }`}>
+                                                                <span className="material-symbols-outlined text-[16px]">
+                                                                    {percentage >= 75 ? 'trending_up' : percentage >= 50 ? 'trending_flat' : 'trending_down'}
+                                                                </span>
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Standing</p>
+                                                                <p className={`text-xs font-bold ${
+                                                                    percentage >= 75 ? 'text-emerald-700' :
+                                                                    percentage >= 50 ? 'text-amber-700' :
+                                                                    'text-rose-700'
+                                                                }`}>
+                                                                    {percentage >= 75 ? 'Good Standing' : percentage >= 50 ? 'Average' : 'Needs Improvement'}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <p className={`text-xl font-black ${scoreColor}`}>{percentage}%</p>
+                                                        </div>
                                                     </div>
                                                 )}
                                             </div>
-                                        </div>
-
-                                        <div className="mt-8 pt-8 border-t border-slate-50 flex items-center gap-4 flex-wrap">
-                                            <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center flex-shrink-0">
-                                                <span className="material-symbols-outlined text-indigo-500">person</span>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Student</p>
-                                                <p className="font-bold text-slate-700">{childName || 'Your Child'}</p>
-                                            </div>
-                                            {score && !score.isAbsent && percentage !== null && (
-                                                <div className="ml-auto">
-                                                    <span className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest ${
-                                                        percentage >= 75 ? 'bg-emerald-50 text-emerald-600' :
-                                                        percentage >= 50 ? 'bg-amber-50 text-amber-600' :
-                                                        'bg-red-50 text-red-600'
-                                                    }`}>
-                                                        {percentage >= 75 ? 'Good Standing' : percentage >= 50 ? 'Average' : 'Needs Improvement'}
-                                                    </span>
-                                                </div>
-                                            )}
-                                        </div>
+                                        )}
                                     </div>
                                 );
-                            })()}
+                            })}
                         </div>
                     )}
-                </main>
-            </div>
-            <BottomNavBar />
+                </div>
+            )}
         </div>
     );
 };

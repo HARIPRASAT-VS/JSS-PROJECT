@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import SideNavBar from '../components/SideNavBar';
-import TopAppBar from '../components/TopAppBar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RegistryProvider, useRegistry } from '../context/RegistryContext';
 
@@ -579,34 +577,28 @@ const AssignFacultyContent = () => {
     const [selectedYear, setSelectedYear] = useState(null);
 
     return (
-        <div className="flex min-h-screen bg-slate-50 text-slate-900 font-sans">
-            <SideNavBar />
-            <main className="flex-1 md:ml-64 flex flex-col">
-                <TopAppBar />
-                <div className="p-6 md:p-10 max-w-6xl mx-auto w-full">
-                    <AnimatePresence mode="wait">
-                        {!selectedYear ? (
-                            <motion.div
-                                key="selector"
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: 20 }}
-                            >
-                                <YearSelector onSelect={setSelectedYear} />
-                            </motion.div>
-                        ) : (
-                            <motion.div
-                                key={selectedYear}
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -20 }}
-                            >
-                                <YearView year={selectedYear} onBack={() => setSelectedYear(null)} />
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
-            </main>
+        <div className="p-3 md:p-6 space-y-6 max-w-6xl mx-auto w-full relative z-10 hidden-scrollbar pb-24">
+            <AnimatePresence mode="wait">
+                {!selectedYear ? (
+                    <motion.div
+                        key="selector"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 20 }}
+                    >
+                        <YearSelector onSelect={setSelectedYear} />
+                    </motion.div>
+                ) : (
+                    <motion.div
+                        key={selectedYear}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                    >
+                        <YearView year={selectedYear} onBack={() => setSelectedYear(null)} />
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

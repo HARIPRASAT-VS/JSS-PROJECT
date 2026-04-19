@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useReducer } from 'react';
-import SideNavBar from '../components/SideNavBar';
-import TopAppBar from '../components/TopAppBar';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../utils/api';
 
@@ -330,128 +328,121 @@ const FacultyLeaveApproval = () => {
     };
 
     return (
-        <div className="flex min-h-screen bg-slate-50 text-slate-900 font-sans">
-            <SideNavBar />
-            <main className="flex-1 md:ml-64 flex flex-col">
-                <TopAppBar />
+        <div className="p-3 md:p-6 space-y-6 max-w-7xl mx-auto w-full relative z-10 pb-24">
 
-                <div className="p-6 md:p-10 max-w-7xl mx-auto w-full space-y-8">
+            {/* PAGE HEADER */}
+            <section className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <p className="text-[10px] text-indigo-500 font-black uppercase tracking-[0.3em] mb-1">Captain Module</p>
+                    <h1 className="text-2xl md:text-4xl font-black text-indigo-950 tracking-tight">Leave Approval</h1>
+                    <p className="text-[10px] md:text-sm text-slate-400 font-medium mt-1">Review and action student leave requests</p>
+                </div>
+                <button
+                    onClick={fetchLeaves}
+                    disabled={state.loading}
+                    className="flex items-center gap-2 bg-white border border-slate-100 px-4 py-2.5 rounded-xl text-slate-500 hover:text-indigo-600 hover:border-indigo-100 transition-all font-bold text-xs shadow-sm w-full justify-center md:w-auto"
+                >
+                    <span className={`material-symbols-outlined text-base ${state.loading ? 'animate-spin' : ''}`}>refresh</span>
+                    Refresh
+                </button>
+            </section>
 
-                    {/* PAGE HEADER */}
-                    <section className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                        <div>
-                            <p className="text-[10px] text-indigo-500 font-black uppercase tracking-[0.3em] mb-1">Captain Module</p>
-                            <h1 className="text-4xl font-black text-indigo-950 tracking-tight">Leave Approval</h1>
-                            <p className="text-sm text-slate-400 font-medium mt-1">Review and action student leave requests</p>
+            {/* STATS STRIP */}
+            <div className="grid grid-cols-3 gap-2 md:gap-4">
+                {TABS.map(tab => {
+                    const tabStyle = {
+                        Pending:  { bg: 'bg-amber-50',   text: 'text-amber-700',   border: 'border-amber-100',  dot: 'bg-amber-500' },
+                        Approved: { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-100', dot: 'bg-emerald-500' },
+                        Rejected: { bg: 'bg-red-50',     text: 'text-red-600',     border: 'border-red-100',    dot: 'bg-red-500' },
+                    }[tab.key];
+                    return (
+                        <div key={tab.key} className={`${tabStyle.bg} border ${tabStyle.border} p-3 md:p-5 rounded-2xl flex flex-col md:flex-row items-center md:items-start gap-2 md:gap-4 text-center md:text-left`}>
+                            <span className={`material-symbols-outlined text-[20px] md:text-2xl ${tabStyle.text}`}>{tab.icon}</span>
+                            <div>
+                                <p className={`text-xl md:text-3xl font-black ${tabStyle.text}`}>{counts[tab.key]}</p>
+                                <p className="text-[8px] md:text-[10px] text-slate-500 font-black uppercase tracking-widest leading-tight">{tab.label}</p>
+                            </div>
                         </div>
-                        <button
-                            onClick={fetchLeaves}
-                            disabled={state.loading}
-                            className="flex items-center gap-2 bg-white border border-slate-100 px-5 py-3 rounded-2xl text-slate-500 hover:text-indigo-600 hover:border-indigo-100 transition-all font-bold text-xs shadow-sm"
-                        >
-                            <span className={`material-symbols-outlined text-base ${state.loading ? 'animate-spin' : ''}`}>refresh</span>
-                            Refresh
-                        </button>
-                    </section>
+                    );
+                })}
+            </div>
 
-                    {/* STATS STRIP */}
-                    <div className="grid grid-cols-3 gap-4">
-                        {TABS.map(tab => {
-                            const tabStyle = {
-                                Pending:  { bg: 'bg-amber-50',   text: 'text-amber-700',   border: 'border-amber-100',  dot: 'bg-amber-500' },
-                                Approved: { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-100', dot: 'bg-emerald-500' },
-                                Rejected: { bg: 'bg-red-50',     text: 'text-red-600',     border: 'border-red-100',    dot: 'bg-red-500' },
-                            }[tab.key];
-                            return (
-                                <div key={tab.key} className={`${tabStyle.bg} border ${tabStyle.border} p-5 rounded-2xl flex items-center gap-4`}>
-                                    <span className={`material-symbols-outlined text-2xl ${tabStyle.text}`}>{tab.icon}</span>
-                                    <div>
-                                        <p className={`text-3xl font-black ${tabStyle.text}`}>{counts[tab.key]}</p>
-                                        <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">{tab.label}</p>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
+            {/* TAB SELECTOR */}
+            <div className="flex overflow-x-auto items-center gap-2 bg-white border border-slate-100 p-2 rounded-2xl w-full md:w-fit shadow-sm hidden-scrollbar shrink-0">
+                {TABS.map(tab => (
+                    <button
+                        key={tab.key}
+                        onClick={() => setActiveTab(tab.key)}
+                        className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap flex-1 md:flex-none ${
+                            activeTab === tab.key
+                                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                                : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50 text-opacity-80'
+                        }`}
+                    >
+                        <span className="material-symbols-outlined text-sm hidden md:block">{tab.icon}</span>
+                        {tab.label.split(' ')[0]}
+                        <span className={`ml-1 w-4 h-4 md:w-5 md:h-5 rounded-full flex items-center justify-center text-[9px] font-black ${
+                            activeTab === tab.key ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
+                        }`}>
+                            {counts[tab.key]}
+                        </span>
+                    </button>
+                ))}
+            </div>
 
-                    {/* TAB SELECTOR */}
-                    <div className="flex items-center gap-2 bg-white border border-slate-100 p-2 rounded-2xl w-fit shadow-sm">
-                        {TABS.map(tab => (
-                            <button
-                                key={tab.key}
-                                onClick={() => setActiveTab(tab.key)}
-                                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
-                                    activeTab === tab.key
-                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-                                        : 'text-slate-400 hover:text-slate-700'
-                                }`}
-                            >
-                                <span className="material-symbols-outlined text-sm">{tab.icon}</span>
-                                {tab.label}
-                                <span className={`ml-1 w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-black ${
-                                    activeTab === tab.key ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
-                                }`}>
-                                    {counts[tab.key]}
-                                </span>
-                            </button>
-                        ))}
-                    </div>
+            {/* ERROR STATE */}
+            {state.error && (
+                <div className="bg-red-50 border border-red-100 rounded-2xl p-4 flex items-center gap-3 text-red-600 font-bold text-xs md:text-sm">
+                    <span className="material-symbols-outlined">error</span>
+                    {state.error}
+                </div>
+            )}
 
-                    {/* ERROR STATE */}
-                    {state.error && (
-                        <div className="bg-red-50 border border-red-100 rounded-2xl p-5 flex items-center gap-3 text-red-600 font-bold text-sm">
-                            <span className="material-symbols-outlined">error</span>
-                            {state.error}
-                        </div>
-                    )}
-
-                    {/* LEAVE CARDS */}
-                    <div className="pb-10">
-                        <AnimatePresence mode="popLayout">
-                            {state.loading ? (
-                                // Skeleton loaders
-                                <motion.div key="skeletons" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                                    {[1, 2, 3, 4].map(i => (
-                                        <div key={i} className="bg-white rounded-3xl border border-slate-50 p-6 space-y-5 animate-pulse">
-                                            <div className="flex justify-between">
-                                                <div className="flex gap-3 items-center">
-                                                    <div className="w-11 h-11 rounded-2xl bg-slate-100"></div>
-                                                    <div className="space-y-2">
-                                                        <div className="h-4 bg-slate-100 rounded-lg w-32"></div>
-                                                        <div className="h-3 bg-slate-50 rounded-lg w-24"></div>
-                                                    </div>
-                                                </div>
-                                                <div className="h-6 bg-slate-50 rounded-full w-20"></div>
-                                            </div>
-                                            <div className="grid grid-cols-4 gap-3 bg-slate-50 p-4 rounded-2xl">
-                                                {[1,2,3,4].map(j => <div key={j} className="h-8 bg-white rounded-xl"></div>)}
+            {/* LEAVE CARDS */}
+            <div className="pb-4">
+                <AnimatePresence mode="popLayout">
+                    {state.loading ? (
+                        // Skeleton loaders
+                        <motion.div key="skeletons" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                            {[1, 2, 3, 4].map(i => (
+                                <div key={i} className="bg-white rounded-[1.5rem] border border-slate-50 p-5 space-y-4 animate-pulse">
+                                    <div className="flex justify-between">
+                                        <div className="flex gap-3 items-center">
+                                            <div className="w-10 h-10 rounded-2xl bg-slate-100"></div>
+                                            <div className="space-y-2">
+                                                <div className="h-4 bg-slate-100 rounded-lg w-28"></div>
+                                                <div className="h-3 bg-slate-50 rounded-lg w-20"></div>
                                             </div>
                                         </div>
-                                    ))}
-                                </motion.div>
-                            ) : visibleLeaves.length === 0 ? (
-                                <EmptyState
-                                    key="empty"
-                                    message={emptyMessages[activeTab].msg}
-                                    icon={emptyMessages[activeTab].icon}
+                                        <div className="h-5 bg-slate-50 rounded-full w-16"></div>
+                                    </div>
+                                    <div className="grid grid-cols-4 gap-2 bg-slate-50 p-3 rounded-xl">
+                                        {[1,2,3,4].map(j => <div key={j} className="h-8 bg-white rounded-lg"></div>)}
+                                    </div>
+                                </div>
+                            ))}
+                        </motion.div>
+                    ) : visibleLeaves.length === 0 ? (
+                        <EmptyState
+                            key="empty"
+                            message={emptyMessages[activeTab].msg}
+                            icon={emptyMessages[activeTab].icon}
+                        />
+                    ) : (
+                        <motion.div key="list" className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                            {visibleLeaves.map(leave => (
+                                <LeaveCard
+                                    key={leave._id}
+                                    leave={leave}
+                                    showActions={activeTab === 'Pending'}
+                                    onAction={handleAction}
+                                    actioning={state.actioning}
                                 />
-                            ) : (
-                                <motion.div key="list" className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                                    {visibleLeaves.map(leave => (
-                                        <LeaveCard
-                                            key={leave._id}
-                                            leave={leave}
-                                            showActions={activeTab === 'Pending'}
-                                            onAction={handleAction}
-                                            actioning={state.actioning}
-                                        />
-                                    ))}
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                    </div>
-                </div>
-            </main>
+                            ))}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
         </div>
     );
 };

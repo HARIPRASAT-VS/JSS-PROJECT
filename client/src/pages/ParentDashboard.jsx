@@ -2,9 +2,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import API from '../utils/api';
-import TopAppBar from '../components/TopAppBar';
-import SideNavBar from '../components/SideNavBar';
-import BottomNavBar from '../components/BottomNavBar';
 
 const ParentDashboard = () => {
     const { user } = useContext(AuthContext);
@@ -67,146 +64,137 @@ const ParentDashboard = () => {
     const attendanceColor = stats?.stats?.attendancePercentage >= 75 ? 'text-emerald-500' : 'text-rose-500';
 
     return (
-        <div className="min-h-screen bg-slate-50 flex">
-            <SideNavBar />
-            <div className="flex-1 md:ml-64 pb-20 md:pb-0">
-                <TopAppBar title={stats?.child?.name ? `Overview - ${stats.child.name}` : "Parent Overview"} />
-                
-                <main className="p-4 md:p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                    {/* Student Profile Overview & Switcher */}
-                    <section className="relative">
-                        <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6 transition-all">
-                            <div className="flex flex-col md:flex-row items-center gap-6">
-                                <div className="w-24 h-24 rounded-3xl bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-inner">
-                                    <span className="material-symbols-outlined text-5xl">person</span>
-                                </div>
-                                <div className="text-center md:text-left">
-                                    <h2 className="text-3xl font-black text-slate-800 tracking-tight">
-                                        {stats?.child?.name || 'Loading Name...'}
-                                    </h2>
-                                    <p className="text-slate-500 font-bold uppercase tracking-widest text-xs mt-1">
-                                        {stats?.registryYear || 'Fetching Registry...'}
-                                    </p>
-                                    <div className="flex items-center gap-2 mt-4 justify-center md:justify-start">
-                                        <span className="px-4 py-1.5 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-indigo-600/20">STUDENT</span>
-                                        <span className="text-slate-200 ml-1">|</span>
-                                        <span className="text-slate-400 text-sm font-medium ml-1">{stats?.child?.email || 'No email found'}</span>
-                                    </div>
+        <div className="p-3 md:p-6 space-y-4 max-w-7xl mx-auto w-full relative pb-24">
+            <main className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                {/* Student Profile Overview & Switcher */}
+                <section className="relative">
+                    <div className="bg-white rounded-[1.5rem] p-5 shadow-sm border border-slate-100 flex flex-col items-center text-center gap-4 transition-all">
+                        <div className="flex flex-col items-center gap-3">
+                            <div className="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-inner">
+                                <span className="material-symbols-outlined text-3xl">person</span>
+                            </div>
+                            <div>
+                                <h2 className="text-xl font-black text-slate-800 tracking-tight">
+                                    {stats?.child?.name || 'Loading Name...'}
+                                </h2>
+                                <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-1">
+                                    {stats?.registryYear || 'Fetching Registry...'}
+                                </p>
+                                <div className="flex items-center gap-2 mt-2 justify-center">
+                                    <span className="px-2 py-1 bg-indigo-600 text-white rounded-lg text-[9px] font-black uppercase tracking-widest shadow-sm shadow-indigo-600/20">STUDENT</span>
                                 </div>
                             </div>
-
-                            {children.length > 1 && (
-                                <div className="relative">
-                                    <button 
-                                        onClick={() => setShowSwitcher(!showSwitcher)}
-                                        className="flex items-center gap-3 px-6 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-xl shadow-slate-900/10 active:scale-95"
-                                    >
-                                        <span className="material-symbols-outlined text-sm">swap_horiz</span>
-                                        Switch Student
-                                        <span className="material-symbols-outlined text-sm">{showSwitcher ? 'expand_less' : 'expand_more'}</span>
-                                    </button>
-
-                                    {showSwitcher && (
-                                        <div className="absolute top-full right-0 mt-3 w-72 bg-white rounded-3xl shadow-2xl border border-slate-100 p-3 z-50 animate-in zoom-in-95 slide-in-from-top-2 duration-200">
-                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 py-3 border-b border-slate-50 mb-2">My Students</p>
-                                            {children.map((child) => (
-                                                <button
-                                                    key={child._id}
-                                                    onClick={() => handleChildSwitch(child._id)}
-                                                    className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all ${selectedChildId === child._id ? 'bg-indigo-50 text-indigo-600' : 'hover:bg-slate-50 text-slate-600'}`}
-                                                >
-                                                    <div className="flex items-center gap-3">
-                                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black ${selectedChildId === child._id ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-400'}`}>
-                                                            {child.name[0]}
-                                                        </div>
-                                                        <div className="text-left">
-                                                            <p className="text-sm font-bold truncate max-w-[120px]">{child.name}</p>
-                                                            <p className="text-[10px] opacity-60 font-medium">{child.year}</p>
-                                                        </div>
-                                                    </div>
-                                                    {selectedChildId === child._id && (
-                                                        <span className="material-symbols-outlined text-indigo-500">check_circle</span>
-                                                    )}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            )}
                         </div>
-                        {switchLoading && (
-                            <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] rounded-[2.5rem] flex items-center justify-center z-10 animate-in fade-in duration-300">
-                                <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+
+                        {children.length > 1 && (
+                            <div className="relative w-full">
+                                <button 
+                                    onClick={() => setShowSwitcher(!showSwitcher)}
+                                    className="w-full flex justify-center items-center gap-2 px-4 py-3 bg-slate-900 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-sm active:scale-95"
+                                >
+                                    <span className="material-symbols-outlined text-sm">swap_horiz</span>
+                                    Switch Student
+                                    <span className="material-symbols-outlined text-sm">{showSwitcher ? 'expand_less' : 'expand_more'}</span>
+                                </button>
+
+                                {showSwitcher && (
+                                    <div className="absolute top-full right-0 left-0 mt-2 bg-white rounded-2xl shadow-xl border border-slate-100 p-2 z-50 animate-in zoom-in-95 slide-in-from-top-2 duration-200 text-left">
+                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-3 py-2 border-b border-slate-50 mb-1">My Students</p>
+                                        {children.map((child) => (
+                                            <button
+                                                key={child._id}
+                                                onClick={() => handleChildSwitch(child._id)}
+                                                className={`w-full flex items-center justify-between p-3 rounded-xl transition-all ${selectedChildId === child._id ? 'bg-indigo-50 text-indigo-600' : 'hover:bg-slate-50 text-slate-600'}`}
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-black text-xs ${selectedChildId === child._id ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-400'}`}>
+                                                        {child.name[0]}
+                                                    </div>
+                                                    <div className="text-left">
+                                                        <p className="text-xs font-bold truncate max-w-[120px]">{child.name}</p>
+                                                        <p className="text-[9px] opacity-60 font-medium">{child.year}</p>
+                                                    </div>
+                                                </div>
+                                                {selectedChildId === child._id && (
+                                                    <span className="material-symbols-outlined text-indigo-500 text-sm">check_circle</span>
+                                                )}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         )}
-                    </section>
+                    </div>
+                    {switchLoading && (
+                        <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] rounded-[1.5rem] flex items-center justify-center z-10 animate-in fade-in duration-300">
+                            <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                        </div>
+                    )}
+                </section>
 
-                    {/* Stats Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {/* Attendance Card */}
-                        <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100 flex flex-col items-center justify-center space-y-6 group hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500">
-                            <div className="relative w-48 h-48 flex items-center justify-center">
-                                <svg className="w-full h-full transform -rotate-90">
-                                    <circle cx="96" cy="96" r="85" stroke="currentColor" strokeWidth="15" fill="transparent" className="text-slate-50" />
-                                    <circle 
-                                        cx="96" cy="96" r="85" 
-                                        stroke="currentColor" strokeWidth="15" fill="transparent" 
-                                        strokeDasharray={534}
-                                        strokeDashoffset={534 - (534 * stats?.stats?.attendancePercentage) / 100}
-                                        className={`${attendanceColor} transition-all duration-1000 ease-out drop-shadow-[0_0_8px_rgba(0,0,0,0.1)]`}
-                                    />
-                                </svg>
-                                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span className={`text-5xl font-black tracking-tighter ${attendanceColor}`}>
-                                        {Number(stats?.stats?.attendancePercentage || 0).toFixed(1)}%
-                                    </span>
-                                    <span className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] mt-1">Attendance</span>
-                                </div>
-                            </div>
-                            <div className="text-center space-y-1">
-                                <p className="text-slate-800 text-lg font-black tracking-tight">Active Session Status</p>
-                                <p className="text-slate-400 font-medium text-sm">{stats?.stats?.presentSessions} of {stats?.stats?.totalSessions} total slots attended</p>
+                {/* Stats Grid */}
+                <div className="grid grid-cols-1 gap-4">
+                    {/* Attendance Card */}
+                    <div className="bg-white rounded-[1.5rem] p-6 shadow-sm border border-slate-100 flex flex-col items-center justify-center space-y-4">
+                        <div className="relative w-36 h-36 flex items-center justify-center">
+                            <svg className="w-full h-full transform -rotate-90">
+                                <circle cx="72" cy="72" r="60" stroke="currentColor" strokeWidth="12" fill="transparent" className="text-slate-50" />
+                                <circle 
+                                    cx="72" cy="72" r="60" 
+                                    stroke="currentColor" strokeWidth="12" fill="transparent" 
+                                    strokeDasharray={377}
+                                    strokeDashoffset={377 - (377 * stats?.stats?.attendancePercentage) / 100}
+                                    className={`${attendanceColor} transition-all duration-1000 ease-out`}
+                                />
+                            </svg>
+                            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                <span className={`text-3xl font-black tracking-tighter ${attendanceColor}`}>
+                                    {Number(stats?.stats?.attendancePercentage || 0).toFixed(1)}%
+                                </span>
+                                <span className="text-[9px] text-slate-400 font-black uppercase tracking-[0.2em] mt-1">Attendance</span>
                             </div>
                         </div>
+                        <div className="text-center space-y-1">
+                            <p className="text-slate-800 text-sm font-black tracking-tight">Active Session Status</p>
+                            <p className="text-slate-400 font-medium text-xs">{stats?.stats?.presentSessions} of {stats?.stats?.totalSessions} total slots attended</p>
+                        </div>
+                    </div>
 
-                        {/* Fees Card */}
-                        <div 
-                            onClick={() => navigate('/parent/fees')}
-                            className="bg-indigo-950 rounded-[2.5rem] p-10 shadow-2xl shadow-indigo-950/20 text-white flex flex-col justify-between relative overflow-hidden group cursor-pointer hover:scale-[1.01] transition-all duration-500"
-                        >
-                            <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] group-hover:bg-indigo-500/20 transition-all duration-700"></div>
-                            <div className="absolute -left-10 -top-10 w-32 h-32 bg-white/5 rounded-full blur-3xl transition-all"></div>
-                            
-                            <div className="space-y-2 relative z-10">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                                    <span className="text-indigo-200 text-[10px] font-black uppercase tracking-[0.2em]">Financial Standing</span>
-                                </div>
-                                <h3 className="text-4xl font-black tracking-tight">Fee Pending</h3>
+                    {/* Fees Card */}
+                    <div 
+                        onClick={() => navigate('/parent/fees')}
+                        className="bg-indigo-950 rounded-[1.5rem] p-6 shadow-md shadow-indigo-950/20 text-white flex flex-col justify-between relative overflow-hidden group cursor-pointer active:scale-[0.98] transition-all duration-300"
+                    >
+                        <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-indigo-500/10 rounded-full blur-[60px]"></div>
+                        
+                        <div className="space-y-1 relative z-10">
+                            <div className="flex items-center gap-2 mb-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                                <span className="text-indigo-200 text-[9px] font-black uppercase tracking-[0.2em]">Financial Standing</span>
                             </div>
+                            <h3 className="text-2xl font-black tracking-tight">Fee Pending</h3>
+                        </div>
 
-                            <div className="mt-10 relative z-10">
-                                <div className="flex items-baseline gap-2">
-                                    <span className="text-2xl font-bold opacity-40">₹</span>
-                                    <span className="text-7xl font-black tracking-tighter tabular-nums">{stats?.stats?.totalPending?.toLocaleString()}</span>
-                                </div>
-                                <p className="text-indigo-300/80 text-sm mt-3 font-bold uppercase tracking-widest text-[10px]">Academic, Hostel & Multi-Campus Dues</p>
+                        <div className="mt-6 relative z-10">
+                            <div className="flex items-baseline gap-1">
+                                <span className="text-lg font-bold opacity-40">₹</span>
+                                <span className="text-5xl font-black tracking-tighter tabular-nums">{stats?.stats?.totalPending?.toLocaleString()}</span>
                             </div>
+                            <p className="text-indigo-300/80 text-[9px] mt-2 font-bold uppercase tracking-widest">Academic, Hostel & Multi-Campus Dues</p>
+                        </div>
 
-                            <div className="mt-12 flex items-center justify-between relative z-10">
-                                <button className="px-8 py-4 bg-white text-indigo-950 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-50 transition-colors shadow-lg shadow-white/10">
-                                    View Full Ledger
-                                </button>
-                                <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:border-white/30 transition-colors">
-                                    <span className="material-symbols-outlined text-white/40 group-hover:translate-x-1 group-hover:text-white transition-all">arrow_forward</span>
-                                </div>
+                        <div className="mt-8 flex items-center justify-between relative z-10">
+                            <button className="px-5 py-3 bg-white text-indigo-950 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-sm">
+                                View Full Ledger
+                            </button>
+                            <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center">
+                                <span className="material-symbols-outlined text-white/60 text-sm">arrow_forward</span>
                             </div>
                         </div>
                     </div>
-                </main>
-            </div>
-            <BottomNavBar />
-            
+                </div>
+            </main>
+                        
             {/* Click outside switcher to close */}
             {showSwitcher && <div className="fixed inset-0 z-40" onClick={() => setShowSwitcher(false)}></div>}
         </div>

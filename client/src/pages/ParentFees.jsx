@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../utils/api';
-import TopAppBar from '../components/TopAppBar';
-import SideNavBar from '../components/SideNavBar';
-import BottomNavBar from '../components/BottomNavBar';
 
 const ParentFees = () => {
     const [fees, setFees] = useState(null);
@@ -75,65 +72,61 @@ const ParentFees = () => {
     </div>;
 
     return (
-        <div className="min-h-screen bg-slate-50 flex">
-            <SideNavBar />
-            <div className="flex-1 md:ml-64 pb-20 md:pb-0">
-                <TopAppBar title={`Fee Management - ${childName}`} />
-                
-                <main className="p-4 md:p-8">
-                    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                        <div className="flex items-center gap-4 mb-2">
-                             <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-600 hover:text-indigo-600 transition-colors">
-                                <span className="material-symbols-outlined">arrow_back</span>
-                             </button>
-                             <div>
-                                <h2 className="text-3xl font-black text-slate-800 tracking-tight">Structured Breakdown</h2>
-                                <p className="text-slate-500 font-medium italic text-sm">Review child's campus financial standing</p>
-                             </div>
-                        </div>
-
-                        {/* Top Section: Side-by-Side */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <FeeBlock 
-                                title="College Fees" 
-                                icon="account_balance" 
-                                color="bg-indigo-600"
-                                total={fees?.college?.total}
-                                paid={fees?.college?.paid}
-                                balance={fees?.collegeBalance}
-                            />
-                            <FeeBlock 
-                                title="Hostel Fees" 
-                                icon="bed" 
-                                color="bg-violet-600"
-                                total={fees?.hostel?.total}
-                                paid={fees?.hostel?.paid}
-                                balance={fees?.hostelBalance}
-                            />
-                        </div>
-
-                        {/* Middle Section: Mess Fees */}
-                        <div className="w-full">
-                            <FeeBlock 
-                                title="Mess Fees" 
-                                icon="restaurant" 
-                                color="bg-amber-500"
-                                total={fees?.mess?.total}
-                                paid={fees?.mess?.paid}
-                                balance={fees?.messBalance}
-                            />
-                        </div>
-
-                        <div className="bg-indigo-50 border border-indigo-100 rounded-3xl p-6 flex items-start gap-4">
-                            <span className="material-symbols-outlined text-indigo-600">info</span>
-                            <p className="text-sm text-indigo-900 font-medium">
-                                Values are updated in real-time by the campus administrative office. For payment receipts, please visit the cash counter or download the official campus app.
-                            </p>
-                        </div>
-                    </div>
-                </main>
+        <div className="p-3 md:p-6 space-y-6 max-w-6xl mx-auto w-full relative z-10 hidden-scrollbar pb-24">
+            {/* Header portion to replace TopAppBar */}
+            <div className="flex items-center gap-3 md:gap-4 mb-2 md:mb-4">
+                <button 
+                    onClick={() => navigate(-1)} 
+                    className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white shadow-sm flex flex-shrink-0 items-center justify-center text-slate-600 hover:text-indigo-600 transition-colors"
+                >
+                    <span className="material-symbols-outlined text-[18px] md:text-[24px]">arrow_back</span>
+                </button>
+                <div>
+                    <h2 className="text-xl md:text-3xl font-black text-slate-800 tracking-tight leading-none mb-1">Fee Management</h2>
+                    <p className="text-slate-500 font-medium text-[10px] md:text-sm">{childName}'s financial standing</p>
+                </div>
             </div>
-            <BottomNavBar />
+
+            <div className="space-y-4 md:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                {/* Top Section: Stacked on mobile, side-by-side on desktop */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                    <FeeBlock 
+                        title="College Fees" 
+                        icon="account_balance" 
+                        color="bg-indigo-600"
+                        total={fees?.college?.total}
+                        paid={fees?.college?.paid}
+                        balance={fees?.collegeBalance}
+                    />
+                    <FeeBlock 
+                        title="Hostel Fees" 
+                        icon="bed" 
+                        color="bg-violet-600"
+                        total={fees?.hostel?.total}
+                        paid={fees?.hostel?.paid}
+                        balance={fees?.hostelBalance}
+                    />
+                </div>
+
+                {/* Middle Section: Mess Fees */}
+                <div className="w-full">
+                    <FeeBlock 
+                        title="Mess Fees" 
+                        icon="restaurant" 
+                        color="bg-amber-500"
+                        total={fees?.mess?.total}
+                        paid={fees?.mess?.paid}
+                        balance={fees?.messBalance}
+                    />
+                </div>
+
+                <div className="bg-indigo-50 border border-indigo-100 rounded-[1.5rem] p-4 md:p-6 flex items-start gap-3 md:gap-4">
+                    <span className="material-symbols-outlined text-indigo-600 shrink-0">info</span>
+                    <p className="text-xs md:text-sm text-indigo-900 font-medium leading-relaxed">
+                        Values are updated in real-time by the campus administrative office. For payment receipts, please visit the cash counter or download the official campus app.
+                    </p>
+                </div>
+            </div>
         </div>
     );
 };

@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import SideNavBar from '../components/SideNavBar';
-import TopAppBar from '../components/TopAppBar';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../utils/api';
 
@@ -142,34 +140,34 @@ const RenderDetails = ({ details, type, loading, error, searchQuery, setSearchQu
                 </div>
             </div>
 
-            <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-x-auto hidden-scrollbar">
                 <table className="w-full text-left">
                     <thead className="bg-slate-50 border-b border-slate-100">
                         <tr>
-                            <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Student Details</th>
-                            <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
-                            <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Marks</th>
-                            <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Parent View</th>
+                            <th className="px-4 md:px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Student Details</th>
+                            <th className="hidden sm:table-cell px-4 md:px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
+                            <th className="px-4 md:px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Marks</th>
+                            <th className="px-4 md:px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Parent View</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                         {filteredScores.map(s => (
                             <tr key={s.student.id} className="hover:bg-slate-50/50 transition-colors group">
-                                <td className="px-8 py-5">
+                                <td className="px-4 md:px-8 py-5">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-black">{s.student.name?.[0]?.toUpperCase()}</div>
-                                        <div>
-                                            <p className="text-sm font-black text-slate-900 group-hover:text-indigo-600 transition-colors">{s.student.name}</p>
-                                            <p className="text-xs font-medium text-slate-400">{s.student.email}</p>
+                                        <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-indigo-50 text-indigo-600 flex shrink-0 items-center justify-center font-black text-xs">{s.student.name?.[0]?.toUpperCase()}</div>
+                                        <div className="min-w-0">
+                                            <p className="text-xs md:text-sm font-black text-slate-900 group-hover:text-indigo-600 transition-colors truncate">{s.student.name}</p>
+                                            <p className="text-[10px] font-medium text-slate-400 truncate">{s.student.email}</p>
                                         </div>
                                     </div>
                                 </td>
-                                <td className="px-8 py-5"><span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${s.marks.isAbsent ? 'bg-red-50 text-red-500' : 'bg-emerald-50 text-emerald-600'}`}>{s.marks.isAbsent ? 'Absent' : 'Present'}</span></td>
-                                <td className="px-8 py-5"><p className={`text-sm font-black ${s.marks.isAbsent ? 'text-red-400' : 'text-slate-900'}`}>{s.marks.isAbsent ? 'AB' : s.marks.value}</p></td>
-                                <td className="px-8 py-5">
+                                <td className="hidden sm:table-cell px-4 md:px-8 py-5"><span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${s.marks.isAbsent ? 'bg-red-50 text-red-500' : 'bg-emerald-50 text-emerald-600'}`}>{s.marks.isAbsent ? 'Absent' : 'Present'}</span></td>
+                                <td className="px-4 md:px-8 py-5 text-center"><p className={`text-xs md:text-sm font-black ${s.marks.isAbsent ? 'text-red-400' : 'text-slate-900'}`}>{s.marks.isAbsent ? 'AB' : s.marks.value}</p></td>
+                                <td className="px-4 md:px-8 py-5">
                                     <div className="flex items-center gap-2">
-                                        <div className={`w-2 h-2 rounded-full ${s.parentViewed?.viewed ? 'bg-indigo-500' : 'bg-slate-200'}`} />
-                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{s.parentViewed?.viewed ? 'Viewed' : 'Pending'}</p>
+                                        <div className={`w-1.5 h-1.5 rounded-full ${s.parentViewed?.viewed ? 'bg-indigo-500' : 'bg-slate-200'}`} />
+                                        <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">{s.parentViewed?.viewed ? 'Seen' : 'Waiting'}</p>
                                     </div>
                                 </td>
                             </tr>
@@ -257,26 +255,20 @@ const FacultyReports = () => {
     }, [details, searchQuery, attendanceFilter, parentViewFilter, sortOrder]);
 
     return (
-        <div className="flex min-h-screen bg-slate-50 text-slate-900 font-sans">
-            <SideNavBar />
-            <main className="flex-1 md:ml-64 flex flex-col">
-                <TopAppBar />
-                <div className="p-6 md:p-10 max-w-7xl mx-auto w-full">
-                    {!type && (
-                        <div className="mb-10">
-                            <p className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em] mb-2">Faculty Reports</p>
-                            <h1 className="text-5xl font-black text-indigo-950 tracking-tight">Academic Insights</h1>
-                        </div>
-                    )}
-                    <AnimatePresence mode="wait">
-                        <motion.div key={testId || type || 'root'} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}>
-                            {!type ? <RenderSelection navigate={navigate} /> : 
-                             !testId ? <RenderList type={type} loading={loading} error={error} tests={tests} testSearchQuery={testSearchQuery} setTestSearchQuery={setTestSearchQuery} fetchTests={fetchTests} navigate={navigate} /> : 
-                             <RenderDetails details={details} type={type} loading={loading} error={error} searchQuery={searchQuery} setSearchQuery={setSearchQuery} attendanceFilter={attendanceFilter} setAttendanceFilter={setAttendanceFilter} sortOrder={sortOrder} setSortOrder={setSortOrder} filteredScores={filteredScores} fetchDetails={fetchDetails} navigate={navigate} />}
-                        </motion.div>
-                    </AnimatePresence>
+        <div className="p-3 md:p-6 space-y-6 max-w-7xl mx-auto w-full relative z-10 hidden-scrollbar pb-24">
+            {!type && (
+                <div className="mb-4">
+                    <p className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em] mb-1">Faculty Reports</p>
+                    <h1 className="text-2xl md:text-5xl font-black text-indigo-950 tracking-tight">Academic Insights</h1>
                 </div>
-            </main>
+            )}
+            <AnimatePresence mode="wait">
+                <motion.div key={testId || type || 'root'} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}>
+                    {!type ? <RenderSelection navigate={navigate} /> : 
+                     !testId ? <RenderList type={type} loading={loading} error={error} tests={tests} testSearchQuery={testSearchQuery} setTestSearchQuery={setTestSearchQuery} fetchTests={fetchTests} navigate={navigate} /> : 
+                     <RenderDetails details={details} type={type} loading={loading} error={error} searchQuery={searchQuery} setSearchQuery={setSearchQuery} attendanceFilter={attendanceFilter} setAttendanceFilter={setAttendanceFilter} sortOrder={sortOrder} setSortOrder={setSortOrder} filteredScores={filteredScores} fetchDetails={fetchDetails} navigate={navigate} />}
+                </motion.div>
+            </AnimatePresence>
         </div>
     );
 };
