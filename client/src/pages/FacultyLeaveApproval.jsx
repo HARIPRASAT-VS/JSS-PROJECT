@@ -328,7 +328,7 @@ const FacultyLeaveApproval = () => {
     };
 
     return (
-        <div className="p-3 md:p-6 space-y-6 max-w-7xl mx-auto w-full relative z-10 pb-24">
+        <div className="p-2 md:p-6 space-y-4 md:space-y-6 max-w-7xl mx-auto w-full relative z-10 pb-24">
 
             {/* PAGE HEADER */}
             <section className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -348,7 +348,7 @@ const FacultyLeaveApproval = () => {
             </section>
 
             {/* STATS STRIP */}
-            <div className="grid grid-cols-3 gap-2 md:gap-4">
+            <div className="grid grid-cols-3 gap-1.5 md:gap-4 px-0.5">
                 {TABS.map(tab => {
                     const tabStyle = {
                         Pending:  { bg: 'bg-amber-50',   text: 'text-amber-700',   border: 'border-amber-100',  dot: 'bg-amber-500' },
@@ -356,11 +356,11 @@ const FacultyLeaveApproval = () => {
                         Rejected: { bg: 'bg-red-50',     text: 'text-red-600',     border: 'border-red-100',    dot: 'bg-red-500' },
                     }[tab.key];
                     return (
-                        <div key={tab.key} className={`${tabStyle.bg} border ${tabStyle.border} p-3 md:p-5 rounded-2xl flex flex-col md:flex-row items-center md:items-start gap-2 md:gap-4 text-center md:text-left`}>
-                            <span className={`material-symbols-outlined text-[20px] md:text-2xl ${tabStyle.text}`}>{tab.icon}</span>
-                            <div>
-                                <p className={`text-xl md:text-3xl font-black ${tabStyle.text}`}>{counts[tab.key]}</p>
-                                <p className="text-[8px] md:text-[10px] text-slate-500 font-black uppercase tracking-widest leading-tight">{tab.label}</p>
+                        <div key={tab.key} className={`${tabStyle.bg} border ${tabStyle.border} p-2 md:p-5 rounded-xl md:rounded-2xl flex flex-col md:flex-row items-center md:items-start gap-1 md:gap-4 text-center md:text-left`}>
+                            <span className={`material-symbols-outlined text-[18px] md:text-2xl ${tabStyle.text}`}>{tab.icon}</span>
+                            <div className="min-w-0">
+                                <p className={`text-sm md:text-3xl font-black ${tabStyle.text} leading-none`}>{counts[tab.key]}</p>
+                                <p className="text-[7px] md:text-[10px] text-slate-500 font-black uppercase tracking-widest leading-tight mt-0.5 truncate">{tab.label.split(' ')[0]}</p>
                             </div>
                         </div>
                     );
@@ -368,20 +368,20 @@ const FacultyLeaveApproval = () => {
             </div>
 
             {/* TAB SELECTOR */}
-            <div className="flex overflow-x-auto items-center gap-2 bg-white border border-slate-100 p-2 rounded-2xl w-full md:w-fit shadow-sm hidden-scrollbar shrink-0">
+            <div className="flex items-center gap-1 bg-white border border-slate-100 p-1 md:p-2 rounded-xl md:rounded-2xl w-full md:w-fit shadow-sm shrink-0">
                 {TABS.map(tab => (
                     <button
                         key={tab.key}
                         onClick={() => setActiveTab(tab.key)}
-                        className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap flex-1 md:flex-none ${
+                        className={`flex items-center justify-center gap-1.5 px-2 md:px-3 py-2 md:py-2.5 rounded-lg md:rounded-xl text-[9px] md:text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap flex-1 md:flex-none ${
                             activeTab === tab.key
                                 ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-                                : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50 text-opacity-80'
+                                : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50'
                         }`}
                     >
-                        <span className="material-symbols-outlined text-sm hidden md:block">{tab.icon}</span>
-                        {tab.label.split(' ')[0]}
-                        <span className={`ml-1 w-4 h-4 md:w-5 md:h-5 rounded-full flex items-center justify-center text-[9px] font-black ${
+                        <span className="material-symbols-outlined text-sm">{tab.icon}</span>
+                        <span className="hidden xs:inline">{tab.label.split(' ')[0]}</span>
+                        <span className={`w-3.5 h-3.5 md:w-5 md:h-5 rounded-full flex items-center justify-center text-[8px] md:text-[9px] font-black ${
                             activeTab === tab.key ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
                         }`}>
                             {counts[tab.key]}

@@ -130,11 +130,13 @@ const FacultyMarks = () => {
                 setAlertMsg({ type: 'success', text: 'Records updated successfully!' });
                 setTimeout(() => {
                     setConfigLocked(false);
+                    // Reset tab to selection view after success
+                    setActiveTab(null);
                     setTestName('');
                     setTotalMarks('');
                     setTestDate('');
                     setAlertMsg({ type: '', text: '' });
-                }, 2500);
+                }, 2000);
             }
         } catch (err) {
             setAlertMsg({ type: 'error', text: err.response?.data?.message || 'Sync failed. Please restart server.' });
@@ -174,99 +176,92 @@ const FacultyMarks = () => {
             </AnimatePresence>
 
             {/* Step 1: Assessment Type Selection */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6 mb-8 md:mb-10">
-                {TEST_TYPES.map(type => (
-                    <motion.button
-                        key={type.id}
-                        whileHover={{ y: -4 }}
-                        onClick={() => { setActiveTab(type.id); setConfigLocked(false); setAlertMsg({ type: '', text: '' }); }}
-                        className={`p-5 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border transition-all text-left relative overflow-hidden group ${
-                            activeTab === type.id 
-                            ? 'bg-indigo-600 border-indigo-700 shadow-xl shadow-indigo-600/30' 
-                            : 'bg-white border-slate-200 hover:border-indigo-300 hover:shadow-xl hover:shadow-indigo-500/10'
-                        }`}
-                    >
-                        <div className={`absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 rounded-full blur-3xl -mr-10 -mt-10 transition-colors ${
-                            activeTab === type.id ? 'bg-white/20' : 'bg-indigo-50 group-hover:bg-indigo-100'
-                        }`} />
-                        <div className="relative z-10 flex flex-col gap-3 md:gap-4">
-                            <div className={`w-12 h-12 md:w-14 md:h-14 rounded-[1rem] md:rounded-2xl flex items-center justify-center shadow-inner transition-colors ${
-                                activeTab === type.id ? 'bg-white/20 text-white' : 'bg-indigo-50 text-indigo-600'
-                            }`}>
-                                <span className="material-symbols-outlined text-[24px] md:text-3xl">{type.icon}</span>
+            {!activeTab && (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
+                    {TEST_TYPES.map(type => (
+                        <motion.button
+                            key={type.id}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => { setActiveTab(type.id); setConfigLocked(false); setAlertMsg({ type: '', text: '' }); }}
+                            className="bg-white p-4 md:p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col items-center text-center gap-3 group"
+                        >
+                            <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center transition-colors group-hover:bg-indigo-600 group-hover:text-white">
+                                <span className="material-symbols-outlined text-2xl md:text-4xl">{type.icon}</span>
                             </div>
-                            <h3 className={`text-base md:text-xl font-black ${activeTab === type.id ? 'text-white' : 'text-indigo-950'}`}>
+                            <h3 className="text-[11px] md:text-lg font-black text-indigo-950 uppercase tracking-tight">
                                 {type.label}
                             </h3>
-                        </div>
-                    </motion.button>
-                ))}
-            </div>
+                        </motion.button>
+                    ))}
+                </div>
+            )}
 
-            {/* Step 2: Configuration Panel */}
-            <AnimatePresence mode="wait">
-                {activeTab && (
+            {/* Step 2: Configuration Panel (Slide-in effect) */}
+            <AnimatePresence>
+                {activeTab && !configLocked && (
                     <motion.div
-                        key={`config-${activeTab}`}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        className="bg-white p-4 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-slate-200 shadow-sm mb-8 md:mb-10"
+                        initial={{ x: '100%' }}
+                        animate={{ x: 0 }}
+                        exit={{ x: '100%' }}
+                        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                        className="fixed inset-0 z-[50] bg-slate-50 p-4 md:p-8 flex flex-col"
                     >
-                        <form onSubmit={handleFormSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-end">
-                            <div className="md:col-span-1">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5 md:mb-2">{currentTabConf.inputLabel}</label>
-                                <input 
-                                    required
-                                    disabled={configLocked}
-                                    value={testName}
-                                    onChange={e => setTestName(e.target.value)}
-                                    placeholder={currentTabConf.inputPlaceholder}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl p-3 md:p-4 text-xs md:text-sm font-bold focus:border-indigo-500 outline-none transition-all disabled:opacity-50"
-                                />
+                        <div className="flex items-center gap-3 mb-6">
+                            <button onClick={() => setActiveTab(null)} className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-600">
+                                <span className="material-symbols-outlined">arrow_back</span>
+                            </button>
+                            <h2 className="text-xl font-black text-indigo-950 uppercase tracking-tight">{currentTabConf.label} Config</h2>
+                        </div>
+
+                        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                            {/* Row 1: Test Name (Left) | Total Mark (Right) */}
+                            <div className="flex gap-4">
+                                <div className="flex-1">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">{currentTabConf.inputLabel}</label>
+                                    <input 
+                                        required
+                                        value={testName}
+                                        onChange={e => setTestName(e.target.value)}
+                                        placeholder={currentTabConf.inputPlaceholder}
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-bold focus:border-indigo-500 outline-none transition-all"
+                                    />
+                                </div>
+                                <div className="w-28">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Total Mark</label>
+                                    <input 
+                                        required
+                                        type="number"
+                                        min="1"
+                                        value={totalMarks}
+                                        onChange={e => setTotalMarks(e.target.value)}
+                                        placeholder="Max"
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-bold focus:border-indigo-500 outline-none transition-all"
+                                    />
+                                </div>
                             </div>
-                            <div className="md:col-span-1">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5 md:mb-2">Test Date</label>
+
+                            {/* Row 2: Test Date */}
+                            <div>
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Test Date</label>
                                 <input 
                                     required
-                                    disabled={configLocked}
                                     type="date"
                                     value={testDate}
                                     onChange={e => setTestDate(e.target.value)}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl p-3 md:p-4 text-xs md:text-sm font-bold focus:border-indigo-500 outline-none transition-all disabled:opacity-50"
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-bold focus:border-indigo-500 outline-none transition-all"
                                 />
                             </div>
-                            <div className="md:col-span-1">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5 md:mb-2">Total Marks</label>
-                                <input 
-                                    required
-                                    disabled={configLocked}
-                                    type="number"
-                                    min="1"
-                                    value={totalMarks}
-                                    onChange={e => setTotalMarks(e.target.value)}
-                                    placeholder="Max Score"
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl p-3 md:p-4 text-xs md:text-sm font-bold focus:border-indigo-500 outline-none transition-all disabled:opacity-50"
-                                />
-                            </div>
-                            <div className="md:col-span-1">
-                                {configLocked ? (
-                                    <button type="button" onClick={() => setConfigLocked(false)}
-                                        className="w-full bg-slate-100 text-slate-600 p-3 md:p-4 rounded-xl md:rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest hover:bg-slate-200 transition-colors cursor-pointer flex items-center justify-center gap-2">
-                                        <span className="material-symbols-outlined text-[14px] md:text-sm">edit</span> Unlock Focus
-                                    </button>
-                                ) : (
-                                    <button 
-                                        type="button"
-                                        onClick={() => handleFormSubmit()}
-                                        disabled={!testName.trim() || !totalMarks || !testDate}
-                                        className="w-full bg-indigo-600 text-white p-3 md:p-4 rounded-xl md:rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 disabled:opacity-50"
-                                    >
-                                        <span className="material-symbols-outlined text-[14px] md:text-sm">play_arrow</span> Start Grading
-                                    </button>
-                                )}
-                            </div>
-                        </form>
+
+                            <button 
+                                onClick={() => handleFormSubmit()}
+                                disabled={!testName.trim() || !totalMarks || !testDate}
+                                className="w-full bg-indigo-600 text-white p-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 disabled:opacity-50 mt-4"
+                            >
+                                <span className="material-symbols-outlined">play_arrow</span> Start Grading
+                            </button>
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -280,14 +275,13 @@ const FacultyMarks = () => {
                         exit={{ opacity: 0, y: 20 }}
                         className="bg-white rounded-[1.5rem] md:rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden"
                     >
-                        <div className="p-4 md:p-8 bg-slate-50/50 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-0">
+                        <div className="p-4 md:p-8 bg-slate-50/50 border-b border-slate-100 flex items-center gap-3">
+                            <button onClick={() => setConfigLocked(false)} className="md:hidden w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-600">
+                                <span className="material-symbols-outlined text-sm">arrow_back</span>
+                            </button>
                             <div>
-                                <h3 className="font-black text-base md:text-lg text-indigo-950">Student Mark Entry</h3>
-                                <p className="text-[10px] md:text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest">Assigned Personnel</p>
-                            </div>
-                            <div className="bg-indigo-100 px-3 py-1.5 md:px-4 md:py-2 rounded-xl border border-indigo-200 self-start md:self-auto">
-                                <span className="text-[8px] md:text-[10px] font-black text-indigo-600 uppercase tracking-widest block">Format Key</span>
-                                <span className="text-[10px] md:text-xs font-bold text-slate-600 uppercase">Input `AB` for Absences</span>
+                                <h3 className="font-black text-base md:text-lg text-indigo-950 uppercase tracking-tight">{testName}</h3>
+                                <p className="text-[9px] md:text-xs font-bold text-slate-400 mt-0.5 uppercase tracking-widest">Entry Panel • Max {totalMarks}</p>
                             </div>
                         </div>
 

@@ -12,21 +12,20 @@ const REPORT_TYPES = [
 // ─── Sub-Components (Defined OUTSIDE to prevent focus loss) ───────────────────
 
 const RenderSelection = ({ navigate }) => (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
         {REPORT_TYPES.map(rt => (
             <motion.button
                 key={rt.id}
-                whileHover={{ y: -8, scale: 1.02 }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => navigate(`/faculty/reports/${rt.id}`)}
-                className="p-10 rounded-[2.5rem] bg-white border border-slate-100 hover:border-indigo-200 shadow-sm hover:shadow-2xl hover:shadow-indigo-500/10 transition-all text-left relative overflow-hidden group"
+                className="bg-white p-4 md:p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col items-center text-center gap-2 group"
             >
-                <div className="relative z-10">
-                    <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-colors bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white`}>
-                        <span className="material-symbols-outlined text-4xl">{rt.icon}</span>
-                    </div>
-                    <h3 className="text-2xl font-black text-slate-950 mb-2">{rt.label}</h3>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Historical Performance</p>
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center transition-colors group-hover:bg-indigo-600 group-hover:text-white">
+                    <span className="material-symbols-outlined text-2xl md:text-4xl">{rt.icon}</span>
                 </div>
+                <h3 className="text-[11px] md:text-lg font-black text-indigo-950 uppercase tracking-tight">{rt.label}</h3>
             </motion.button>
         ))}
     </div>
@@ -88,54 +87,48 @@ const RenderList = ({ type, loading, error, tests, testSearchQuery, setTestSearc
 );
 
 const RenderDetails = ({ details, type, loading, error, searchQuery, setSearchQuery, attendanceFilter, setAttendanceFilter, sortOrder, setSortOrder, filteredScores, fetchDetails, navigate }) => (
-    <div className="space-y-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div>
-                <button onClick={() => navigate(`/faculty/reports/${type}`)} className="flex items-center gap-2 text-indigo-600 font-black text-xs uppercase tracking-widest mb-4">
-                    <span className="material-symbols-outlined text-sm">arrow_back</span> List View
-                </button>
-                <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">{details?.testType || 'Report Detail'}</p>
-                <h2 className="text-4xl font-black text-slate-950 tracking-tight">{details?.testName}</h2>
-            </div>
-            <div className="bg-white px-6 py-4 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-8">
+    <div className="space-y-4 md:space-y-8">
+        <div className="flex flex-col gap-4">
+            <button onClick={() => navigate(`/faculty/reports/${type}`)} className="flex items-center gap-2 text-indigo-600 font-black text-[10px] uppercase tracking-widest bg-white w-fit px-3 py-1.5 rounded-full shadow-sm">
+                <span className="material-symbols-outlined text-sm">arrow_back</span> List View
+            </button>
+            <p className="text-[9px] font-black text-indigo-400 uppercase tracking-widest ml-1">{details?.testType || 'Report Detail'}</p>
+            <h2 className="text-3xl md:text-5xl font-black text-slate-950 tracking-tight leading-none px-1 uppercase">{details?.testName}</h2>
+            
+            <div className="bg-white p-4 md:p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-8 md:w-fit">
                 <div>
-                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Total</p>
-                    <p className="text-xl font-black text-slate-900">{details?.totalMarks}<span className="text-[10px] text-slate-300 ml-1">pts</span></p>
+                    <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1">Total</p>
+                    <p className="text-2xl font-black text-slate-900">{details?.totalMarks}<span className="text-xs text-slate-300 ml-1">pts</span></p>
                 </div>
-                <div className="w-px h-8 bg-slate-100" />
+                <div className="w-px h-10 bg-slate-100" />
                 <div>
-                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Enrolled</p>
-                    <p className="text-xl font-black text-slate-900">{details?.scores?.length || 0}</p>
+                    <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1">Enrolled</p>
+                    <p className="text-2xl font-black text-slate-900">{details?.scores?.length || 0}</p>
                 </div>
             </div>
         </div>
 
-        <div className="flex flex-col gap-6">
-            <div className="bg-white p-2 rounded-[2rem] border border-slate-100 shadow-sm flex items-center gap-2 mb-6">
+        <div className="flex flex-col gap-4">
+            <div className="bg-white p-1.5 md:p-2 rounded-2xl md:rounded-[2rem] border border-slate-100 shadow-sm flex items-center gap-1.5">
                 <div className="flex-1 relative group">
-                    <span className="absolute left-6 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-300 group-focus-within:text-indigo-600 transition-colors">search</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-300 text-base">search</span>
                     <input 
                         type="text"
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
-                        placeholder="Search by student name or email..."
-                        className="w-full bg-white border-0 rounded-3xl py-5 pl-14 pr-12 text-sm font-bold outline-none transition-all placeholder:text-slate-200"
+                        placeholder="Search by student name..."
+                        className="w-full bg-white border-0 rounded-xl py-3 pl-10 pr-8 text-xs font-bold outline-none transition-all placeholder:text-slate-200"
                     />
-                    {searchQuery && (
-                        <button onClick={() => setSearchQuery('')} className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-all flex items-center justify-center">
-                            <span className="material-symbols-outlined text-sm">close</span>
-                        </button>
-                    )}
                 </div>
-                <div className="h-10 w-px bg-slate-100 hidden md:block mx-2" />
-                <div className="flex items-center gap-2 pr-2">
-                    <select value={attendanceFilter} onChange={e => setAttendanceFilter(e.target.value)} className="bg-slate-50/50 border-0 rounded-2xl px-5 py-3.5 text-[10px] font-black uppercase tracking-widest outline-none hover:bg-slate-100 transition-all cursor-pointer">
+                <div className="h-8 w-px bg-slate-100 mx-1" />
+                <div className="flex items-center gap-1.5 pr-1">
+                    <select value={attendanceFilter} onChange={e => setAttendanceFilter(e.target.value)} className="bg-slate-50 border-0 rounded-xl px-2 py-2 text-[8px] font-black uppercase tracking-widest outline-none">
                         <option value="All">All Attendance</option>
                         <option value="Present">Present</option>
                         <option value="Absent">Absent</option>
                     </select>
-                    <button onClick={() => setSortOrder(prev => prev === 'High' ? 'Low' : 'High')} className="bg-indigo-50 text-indigo-600 rounded-2xl p-3.5 hover:bg-indigo-600 hover:text-white transition-all">
-                        <span className="material-symbols-outlined text-sm">{sortOrder === 'High' ? 'arrow_downward' : 'arrow_upward'}</span>
+                    <button onClick={() => setSortOrder(prev => prev === 'High' ? 'Low' : 'High')} className="bg-indigo-50 text-indigo-600 rounded-xl p-2">
+                        <span className="material-symbols-outlined text-[16px]">{sortOrder === 'High' ? 'arrow_downward' : 'arrow_upward'}</span>
                     </button>
                 </div>
             </div>

@@ -115,18 +115,18 @@ const FacultyDashboard = () => {
                 <motion.div 
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-[1.5rem] p-5 text-white relative overflow-hidden shadow-sm shadow-indigo-900/5"
+                    className="bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-[1.5rem] p-4 md:p-5 text-white relative overflow-hidden shadow-sm shadow-indigo-900/5 group"
                 >
                     <div className="relative z-10">
-                        <h3 className="text-xl font-bold mb-2">Start Session</h3>
-                        <p className="text-indigo-200 text-xs mb-6">Generate an OTP to start today's attendance window. Students will be notified.</p>
+                        <h3 className="text-lg md:text-xl font-bold mb-1.5">Start Session</h3>
+                        <p className="text-indigo-200 text-[10px] md:text-xs mb-4 md:mb-6">Generate an OTP for today's attendance window.</p>
                         
                         {activeOtp ? (
-                            <div className="space-y-4">
-                                <div className="bg-white/20 backdrop-blur-md rounded-[1rem] p-4 text-center border border-white/10">
-                                    <p className="text-[10px] uppercase tracking-widest text-indigo-200 mb-1">Current OTP code</p>
-                                    <h4 className="text-4xl font-black tracking-widest">{activeOtp}</h4>
-                                    <p className="text-[10px] font-bold text-indigo-50 mt-2 bg-black/10 inline-block px-3 py-1 rounded-full">
+                            <div className="space-y-3 md:space-y-4">
+                                <div className="bg-white/20 backdrop-blur-md rounded-[1rem] p-3 md:p-4 text-center border border-white/10">
+                                    <p className="text-[9px] md:text-[10px] uppercase tracking-widest text-indigo-200 mb-1">Current OTP code</p>
+                                    <h4 className="text-3xl md:text-4xl font-black tracking-widest">{activeOtp}</h4>
+                                    <p className="text-[9px] md:text-[10px] font-bold text-indigo-50 mt-1.5 bg-black/10 inline-block px-3 py-0.5 md:py-1 rounded-full">
                                         Expires in: <span className="font-mono text-white">{timeLeft}</span>
                                     </p>
                                 </div>
