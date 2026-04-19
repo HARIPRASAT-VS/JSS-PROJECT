@@ -102,31 +102,31 @@ const FacultyDashboard = () => {
     };
 
     return (
-        <div className="p-3 md:p-6 space-y-4 max-w-7xl mx-auto w-full pb-24">
-            <section className="flex flex-col md:flex-row md:items-end justify-between gap-2 px-1">
+        <div className="p-3 lg:p-6 space-y-4 max-w-7xl mx-auto w-full pb-24">
+            <section className="flex flex-col lg:flex-row lg:items-end justify-between gap-2 px-1">
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                    <h1 className="text-2xl md:text-4xl font-black text-indigo-900 tracking-tighter">Faculty Command Center</h1>
+                    <h1 className="text-2xl lg:text-4xl font-black text-indigo-900 tracking-tighter">Faculty Command Center</h1>
                     <p className="text-on-surface-variant text-sm font-medium mt-1">Manage class attendance and student activity.</p>
                 </motion.div>
             </section>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* OTP Generation */}
                 <motion.div 
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-[1.5rem] p-4 md:p-5 text-white relative overflow-hidden shadow-sm shadow-indigo-900/5 group"
+                    className="bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-[1.5rem] p-4 lg:p-5 text-white relative overflow-hidden shadow-sm shadow-indigo-900/5 group"
                 >
                     <div className="relative z-10">
-                        <h3 className="text-lg md:text-xl font-bold mb-1.5">Start Session</h3>
-                        <p className="text-indigo-200 text-[10px] md:text-xs mb-4 md:mb-6">Generate an OTP for today's attendance window.</p>
+                        <h3 className="text-lg lg:text-xl font-bold mb-1.5">Start Session</h3>
+                        <p className="text-indigo-200 text-[10px] lg:text-xs mb-4 lg:mb-6">Generate an OTP for today's attendance window.</p>
                         
                         {activeOtp ? (
-                            <div className="space-y-2 md:space-y-3">
-                                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-2.5 md:p-4 text-center border border-white/10">
-                                    <p className="text-[8px] md:text-[10px] uppercase tracking-widest text-indigo-100 mb-0.5 opacity-80">Current OTP</p>
-                                    <h4 className="text-2xl md:text-4xl font-black tracking-[0.2em]">{activeOtp}</h4>
-                                    <p className="text-[8px] md:text-[10px] font-bold text-indigo-50 mt-1 md:mt-2 bg-black/10 inline-block px-2.5 py-0.5 rounded-full">
+                            <div className="space-y-2 lg:space-y-3">
+                                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-2.5 lg:p-4 text-center border border-white/10">
+                                    <p className="text-[8px] lg:text-[10px] uppercase tracking-widest text-indigo-100 mb-0.5 opacity-80">Current OTP</p>
+                                    <h4 className="text-2xl lg:text-4xl font-black tracking-[0.2em]">{activeOtp}</h4>
+                                    <p className="text-[8px] lg:text-[10px] font-bold text-indigo-50 mt-1 lg:mt-2 bg-black/10 inline-block px-2.5 py-0.5 rounded-full">
                                         Expires: <span className="font-mono text-white">{timeLeft}</span>
                                     </p>
                                 </div>
@@ -188,7 +188,7 @@ const FacultyDashboard = () => {
                                 <div key={student._id} className="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-100">
                                     <div>
                                         <p className="font-bold text-xs text-indigo-900">{student.firstName} {student.lastName}</p>
-                                        <p className="text-[10px] text-slate-500 truncate max-w-[150px] md:max-w-xs">{student.email}</p>
+                                        <p className="text-[10px] text-slate-500 truncate max-w-[150px] lg:max-w-xs">{student.email}</p>
                                     </div>
                                     <div className="text-right flex flex-col items-end">
                                        {student.isBlocked && <span className="px-2 py-0.5 text-[9px] bg-red-100 text-red-700 rounded-md font-bold uppercase mb-1">Blocked</span>}

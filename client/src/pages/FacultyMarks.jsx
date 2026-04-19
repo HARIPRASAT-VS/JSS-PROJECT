@@ -177,7 +177,7 @@ const FacultyMarks = () => {
 
             {/* Step 1: Assessment Type Selection */}
             {!activeTab && (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                     {TEST_TYPES.map(type => (
                         <motion.button
                             key={type.id}
@@ -228,7 +228,7 @@ const FacultyMarks = () => {
                                         className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs font-bold focus:border-indigo-500 outline-none transition-all"
                                     />
                                 </div>
-                                <div className="flex-1">
+                                <div className="flex-1 lg:flex-none lg:w-32">
                                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5 ml-1">Total</label>
                                     <input 
                                         required
@@ -273,10 +273,10 @@ const FacultyMarks = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 20 }}
-                        className="bg-white rounded-[1.5rem] md:rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden"
+                        className="bg-white rounded-[1.5rem] lg:rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden"
                     >
                         <div className="p-4 md:p-8 bg-slate-50/50 border-b border-slate-100 flex items-center gap-3">
-                            <button onClick={() => setConfigLocked(false)} className="md:hidden w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-600">
+                            <button onClick={() => setConfigLocked(false)} className="lg:hidden w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-600">
                                 <span className="material-symbols-outlined text-sm">arrow_back</span>
                             </button>
                             <div>
@@ -324,7 +324,7 @@ const FacultyMarks = () => {
                             )}
                         </div>
 
-                        <div className="p-4 md:p-8 bg-slate-50 border-t border-slate-200 flex justify-end gap-3 md:gap-4 fixed bottom-[72px] md:static left-0 right-0 z-20 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] md:shadow-none bg-white/80 md:bg-slate-50 backdrop-blur-md md:backdrop-blur-none">
+                        <div className="p-4 md:p-8 bg-slate-50 border-t border-slate-200 flex justify-end gap-3 md:gap-4 fixed bottom-[72px] lg:static left-0 right-0 z-20 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] lg:shadow-none bg-white/80 lg:bg-slate-50 backdrop-blur-md lg:backdrop-blur-none">
                             <button 
                                 disabled={submitLoading}
                                 onClick={submitMarks}

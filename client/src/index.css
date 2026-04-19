@@ -54,3 +54,29 @@
 input:focus {
   @apply outline-none ring-0;
 }
+
+/* ─── Global Mobile-First Safety Shield ─── */
+/* This ensures that any device below 1024px (Mobile/Tablet) 
+   consistently follows the App-style layout regardless of 
+   component-level breakpoint logic. */
+@media (max-width: 1023px) {
+  /* Prevent sidebar from pushing main content */
+  aside.lg\:translate-x-0 {
+    display: none !important;
+  }
+  
+  /* Reset margins typically applied on desktop */
+  .lg\:ml-64 {
+    margin-left: 0 !important;
+  }
+  
+  /* Force full width and bottom nav spacing */
+  main {
+    padding-bottom: 5rem !important; /* Fixed spacing for BottomNav */
+  }
+
+  /* Compact spacing for mobile headers */
+  .lg\:items-end {
+    @apply items-start !important;
+  }
+}

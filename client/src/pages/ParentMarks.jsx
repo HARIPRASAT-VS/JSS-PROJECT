@@ -62,7 +62,7 @@ const ParentMarks = () => {
                             window.history.back();
                         }
                     }}
-                    className="flex md:hidden items-center text-indigo-600 font-bold text-xs mb-2 bg-indigo-50 px-3 py-1.5 w-fit rounded-full"
+                    className="flex lg:hidden items-center text-indigo-600 font-bold text-xs mb-2 bg-indigo-50 px-3 py-1.5 w-fit rounded-full"
                 >
                     <span className="material-symbols-outlined text-[14px] mr-1">arrow_back</span>
                     {selectedCategory ? 'Back to Categories' : 'Back'}
@@ -84,7 +84,7 @@ const ParentMarks = () => {
             )}
 
             {!selectedCategory ? (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     {categories.map((cat) => {
                         const count = tests.filter(t => t.testType === cat.id).length;
                         return (
@@ -111,7 +111,7 @@ const ParentMarks = () => {
                 <div className="space-y-4 animate-in fade-in duration-300">
                     <button
                         onClick={() => { setSelectedCategory(null); setSelectedTest(null); }}
-                        className="hidden md:flex items-center gap-2 text-indigo-600 font-bold text-sm hover:gap-3 transition-all"
+                        className="hidden lg:flex items-center gap-2 text-indigo-600 font-bold text-sm hover:gap-3 transition-all"
                     >
                         <span className="material-symbols-outlined">arrow_back</span>
                         Back to Categories
@@ -125,7 +125,7 @@ const ParentMarks = () => {
                             <p className="text-slate-400 font-medium text-xs">No records available.</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
                             {filteredTests.map((test) => {
                                 const score = getScore(test);
                                 const isSelected = selectedTest?._id === test._id;

@@ -64,7 +64,7 @@ const ParentDashboard = () => {
     const attendanceColor = stats?.stats?.attendancePercentage >= 75 ? 'text-emerald-500' : 'text-rose-500';
 
     return (
-        <div className="p-3 md:p-6 space-y-4 max-w-7xl mx-auto w-full relative pb-24">
+        <div className="p-3 lg:p-6 space-y-4 max-w-7xl mx-auto w-full relative pb-24">
             <main className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
                 {/* Student Profile Overview & Switcher */}
                 <section className="relative">

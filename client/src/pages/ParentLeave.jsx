@@ -95,7 +95,7 @@ const LeaveCard = ({ leave, onAction }) => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-50/50 p-4 rounded-2xl border border-slate-50">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 bg-slate-50/50 p-4 rounded-2xl border border-slate-50">
                 <div>
                     <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest mb-1.5">Duration</p>
                     <p className="font-bold text-slate-800 text-xs">
@@ -232,8 +232,5 @@ const ParentLeave = () => {
         </div>
     );
 };
-
-export default ParentLeave;
-
 
 export default ParentLeave;

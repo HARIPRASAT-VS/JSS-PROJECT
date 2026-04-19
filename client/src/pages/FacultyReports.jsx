@@ -12,7 +12,7 @@ const REPORT_TYPES = [
 // ─── Sub-Components (Defined OUTSIDE to prevent focus loss) ───────────────────
 
 const RenderSelection = ({ navigate }) => (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
+    <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
         {REPORT_TYPES.map(rt => (
             <motion.button
                 key={rt.id}
@@ -60,7 +60,7 @@ const RenderList = ({ type, loading, error, tests, testSearchQuery, setTestSearc
         </div>
 
         {loading ? <LoadingState /> : error ? <ErrorState error={error} retry={fetchTests} /> : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {tests.filter(t => t.testName?.toLowerCase().includes(testSearchQuery.toLowerCase())).map(test => (
                     <motion.div
                         key={test._id}
@@ -95,7 +95,7 @@ const RenderDetails = ({ details, type, loading, error, searchQuery, setSearchQu
             <p className="text-[9px] font-black text-indigo-400 uppercase tracking-widest ml-1">{details?.testType || 'Report Detail'}</p>
             <h2 className="text-3xl md:text-5xl font-black text-slate-950 tracking-tight leading-none px-1 uppercase">{details?.testName}</h2>
             
-            <div className="bg-white p-4 md:p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-8 md:w-fit">
+            <div className="bg-white p-4 md:p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-8 lg:w-fit">
                 <div>
                     <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1">Total</p>
                     <p className="text-2xl font-black text-slate-900">{details?.totalMarks}<span className="text-xs text-slate-300 ml-1">pts</span></p>

@@ -57,13 +57,13 @@ const SideNavBar = () => {
         <>
             {isOpen && (
                 <div 
-                    className="fixed inset-0 bg-slate-900/50 z-[45] md:hidden backdrop-blur-sm transition-opacity" 
+                    className="fixed inset-0 bg-slate-900/50 z-[45] lg:hidden backdrop-blur-sm transition-opacity" 
                     onClick={() => setIsOpen(false)} 
                 />
             )}
-            <aside className={`h-screen w-64 fixed left-0 top-0 flex flex-col p-4 space-y-2 bg-slate-50 border-r border-slate-200 z-50 transition-transform duration-300 md:translate-x-0 md:flex ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                <div className="flex items-center gap-3 px-2 mb-8 mt-2 md:mt-0">
-                    <div className="md:hidden p-1 mr-[-8px] text-slate-400 cursor-pointer" onClick={() => setIsOpen(false)}>
+            <aside className={`h-screen w-64 fixed left-0 top-0 flex flex-col p-4 space-y-2 bg-slate-50 border-r border-slate-200 z-50 transition-transform duration-300 lg:translate-x-0 lg:flex ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                <div className="flex items-center gap-3 px-2 mb-8 mt-2 lg:mt-0">
+                    <div className="lg:hidden p-1 mr-[-8px] text-slate-400 cursor-pointer" onClick={() => setIsOpen(false)}>
                         <span className="material-symbols-outlined">close</span>
                     </div>
                     <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-600/20">

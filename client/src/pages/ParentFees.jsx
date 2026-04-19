@@ -89,7 +89,7 @@ const ParentFees = () => {
 
             <div className="space-y-4 md:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
                 {/* Top Section: Stacked on mobile, side-by-side on desktop */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
                     <FeeBlock 
                         title="College Fees" 
                         icon="account_balance" 

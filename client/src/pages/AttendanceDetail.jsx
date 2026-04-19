@@ -3,7 +3,7 @@ import api from '../utils/api';
 import { AuthContext } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const AttendancePage = () => {
+const AttendanceDetail = () => {
     const { user } = useContext(AuthContext);
     const [logs, setLogs] = useState([]);
     const [stats, setStats] = useState({ percentage: '0', presentCount: 0, absentCount: 0, lateCount: 0 });
@@ -129,4 +129,4 @@ const AttendancePage = () => {
     );
 };
 
-export default AttendancePage;
+export default AttendanceDetail;

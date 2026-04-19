@@ -35,9 +35,9 @@ const AdminDashboard = () => {
 
     return (
         <div className="p-3 md:p-6 space-y-4 max-w-7xl mx-auto w-full pb-24">
-            <section className="flex flex-col md:flex-row md:items-end justify-between gap-2 px-1">
+            <section className="flex flex-col lg:flex-row lg:items-end justify-between gap-2 px-1">
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-                    <h1 className="text-2xl md:text-4xl font-black text-indigo-900 tracking-tighter">System Administration</h1>
+                    <h1 className="text-2xl lg:text-4xl font-black text-indigo-900 tracking-tighter">System Administration</h1>
                     <p className="text-on-surface-variant text-sm font-medium mt-1">Review block statuses and manage unblock appeals securely.</p>
                 </motion.div>
             </section>

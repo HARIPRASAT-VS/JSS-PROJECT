@@ -197,7 +197,7 @@ const LeaveManagementPage = () => {
     return (
         <div className="p-3 md:p-6 space-y-6 max-w-7xl mx-auto w-full relative z-10 hidden-scrollbar pb-24">
             {/* Page Header */}
-            <section className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <section className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
                 <div className="space-y-1">
                     <p className="text-[#5b3eb5] font-semibold tracking-wider text-[10px] md:text-xs uppercase">Management Console</p>
                     <h3 className="text-2xl md:text-4xl font-extrabold text-slate-800 tracking-tight">Leave Approval</h3>

@@ -328,7 +328,7 @@ const FacultyLeaveApproval = () => {
             <div className="fixed top-20 right-2 z-50 bg-indigo-600 text-white text-[8px] px-2 py-0.5 rounded-full font-bold uppercase shadow-lg pointer-events-none">Mobile UI V2</div>
 
             {/* PAGE HEADER */}
-            <section className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <section className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
                 <div>
                     <p className="text-[10px] text-indigo-500 font-black uppercase tracking-[0.3em] mb-1">Captain Module</p>
                     <h1 className="text-2xl md:text-4xl font-black text-indigo-950 tracking-tight">Leave Approval</h1>
@@ -337,7 +337,7 @@ const FacultyLeaveApproval = () => {
                 <button
                     onClick={fetchLeaves}
                     disabled={state.loading}
-                    className="flex items-center gap-2 bg-white border border-slate-100 px-4 py-2.5 rounded-xl text-slate-500 hover:text-indigo-600 hover:border-indigo-100 transition-all font-bold text-xs shadow-sm w-full justify-center md:w-auto"
+                    className="flex items-center gap-2 bg-white border border-slate-100 px-4 py-2.5 rounded-xl text-slate-500 hover:text-indigo-600 hover:border-indigo-100 transition-all font-bold text-xs shadow-sm w-full justify-center lg:w-auto"
                 >
                     <span className={`material-symbols-outlined text-base ${state.loading ? 'animate-spin' : ''}`}>refresh</span>
                     Refresh
@@ -345,7 +345,7 @@ const FacultyLeaveApproval = () => {
             </section>
 
             {/* STATS STRIP - Scrollable on very small screens */}
-            <div className="flex md:grid md:grid-cols-3 gap-2 md:gap-4 overflow-x-auto no-scrollbar px-0.5 py-1">
+            <div className="flex lg:grid lg:grid-cols-3 gap-2 lg:gap-4 overflow-x-auto no-scrollbar px-0.5 py-1">
                 {TABS.map(tab => {
                     const tabStyle = {
                         Pending:  { bg: 'bg-amber-50',   text: 'text-amber-700',   border: 'border-amber-100',  dot: 'bg-amber-500' },
@@ -365,7 +365,7 @@ const FacultyLeaveApproval = () => {
             </div>
 
             {/* TAB SELECTOR */}
-            <div className="flex items-center gap-1 bg-white border border-slate-100 p-1 md:p-2 rounded-xl md:rounded-2xl w-full md:w-fit shadow-sm shrink-0">
+            <div className="flex items-center gap-1 bg-white border border-slate-100 p-1 lg:p-2 rounded-xl lg:rounded-2xl w-full lg:w-fit shadow-sm shrink-0">
                 {TABS.map(tab => (
                     <button
                         key={tab.key}

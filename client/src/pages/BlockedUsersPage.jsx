@@ -44,11 +44,11 @@ const BlockedUsersPage = () => {
     };
 
     return (
-        <div className="p-3 md:p-6 space-y-6 max-w-7xl mx-auto w-full relative z-10 hidden-scrollbar pb-24 animate-in fade-in duration-500">
-            <div className="flex justify-between items-end border-b border-slate-100 pb-4 md:pb-6">
+        <div className="p-3 lg:p-6 space-y-6 max-w-7xl mx-auto w-full relative z-10 hidden-scrollbar pb-24 animate-in fade-in duration-500">
+            <div className="flex justify-between items-end border-b border-slate-100 pb-4 lg:pb-6">
                 <div>
                     <p className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em] mb-1">Administrative Terminal</p>
-                    <h2 className="text-2xl md:text-3xl font-black text-indigo-950 tracking-tight">Security Management</h2>
+                    <h2 className="text-2xl lg:text-3xl font-black text-indigo-950 tracking-tight">Security Management</h2>
                 </div>
                 <div className="text-right hidden sm:block">
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">System Status</p>
@@ -56,13 +56,13 @@ const BlockedUsersPage = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
                 {/* Section 1: Blocked Users */}
-                <div className="space-y-4 md:space-y-6">
-                    <div className="flex items-center gap-2 md:gap-3 ml-2">
-                        <span className="material-symbols-outlined text-red-600 font-black text-[18px] md:text-[24px]">block</span>
-                        <h2 className="text-[10px] md:text-sm font-black uppercase tracking-[0.15em] text-slate-500">Currently Restricted</h2>
-                        <span className="bg-red-100 text-red-700 px-2.5 py-0.5 md:px-3 md:py-1 rounded-full text-[10px] font-black">{blockedUsers.length}</span>
+                <div className="space-y-4 lg:space-y-6">
+                    <div className="flex items-center gap-2 lg:gap-3 ml-2">
+                        <span className="material-symbols-outlined text-red-600 font-black text-[18px] lg:text-[24px]">block</span>
+                        <h2 className="text-[10px] lg:text-sm font-black uppercase tracking-[0.15em] text-slate-500">Currently Restricted</h2>
+                        <span className="bg-red-100 text-red-700 px-2.5 py-0.5 lg:px-3 lg:py-1 rounded-full text-[10px] font-black">{blockedUsers.length}</span>
                     </div>
 
                     <div className="space-y-4 max-h-[700px] overflow-y-auto pr-1 md:pr-2 custom-scrollbar">

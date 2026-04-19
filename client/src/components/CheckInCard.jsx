@@ -165,12 +165,12 @@ const CheckInCard = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className={`rounded-[2rem] p-6 relative overflow-hidden shadow-sm transition-all duration-500 w-full ${status.isActive ? 'bg-indigo-900 text-white shadow-xl shadow-indigo-900/20' : 'bg-white text-on-surface border border-slate-100 shadow-indigo-900/5'}`}
             >
-                <div className="relative z-10 flex flex-col justify-between items-center sm:flex-row sm:items-center gap-6">
-                    <div className="flex-1 text-center sm:text-left">
-                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase block mx-auto sm:mx-0 w-fit ${status.isActive ? 'bg-emerald-400/20 text-emerald-300' : 'bg-slate-100 text-slate-500'}`}>
+                <div className="relative z-10 flex flex-col justify-between items-center lg:flex-row lg:items-center gap-6">
+                    <div className="flex-1 text-center lg:text-left">
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase block mx-auto lg:mx-0 w-fit ${status.isActive ? 'bg-emerald-400/20 text-emerald-300' : 'bg-slate-100 text-slate-500'}`}>
                             {status.isActive ? 'Completed' : 'Off Duty'}
                         </span>
-                        <h3 className="text-xl md:text-2xl font-black tracking-tight mt-3">
+                        <h3 className="text-xl lg:text-2xl font-black tracking-tight mt-3">
                             {status.isActive ? 'Attendance Marked' : 'Ready to Start?'}
                         </h3>
                         <p className={`text-sm mt-1 font-medium ${status.isActive ? 'text-indigo-200' : 'text-on-surface-variant'}`}>
@@ -179,14 +179,14 @@ const CheckInCard = () => {
                     </div>
 
                     {status.isActive ? (
-                        <div className="flex flex-col items-center sm:items-end gap-3 w-full sm:w-auto">
+                        <div className="flex flex-col items-center lg:items-end gap-3 w-full lg:w-auto">
                             <div className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-6 py-3 rounded-xl flex items-center gap-2 font-bold shadow-lg shadow-emerald-500/10 cursor-default select-none">
                                 <span className="material-symbols-outlined">check_circle</span>
                                 Verified Today
                             </div>
                         </div>
                     ) : (
-                        <div className="w-full sm:w-auto">
+                        <div className="w-full lg:w-auto">
                             {activeOtpCode && (
                                 <div className="mb-4 bg-indigo-50 border border-indigo-100 rounded-xl p-3 text-center shadow-sm">
                                     <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-1 flex items-center justify-center gap-1">

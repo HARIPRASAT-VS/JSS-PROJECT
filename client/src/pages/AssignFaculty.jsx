@@ -193,7 +193,7 @@ const PersonRow = ({ person, isMember, year, removePerson, editUser, state }) =>
                     {person.firstName?.[0]?.toUpperCase() || '?'}
                 </div>
                 {editId === person._id ? (
-                    <div className="flex-1 min-w-0 grid grid-cols-1 md:grid-cols-2 gap-3 items-center ml-2" onClick={e => e.stopPropagation()}>
+                    <div className="flex-1 min-w-0 grid grid-cols-1 lg:grid-cols-2 gap-3 items-center ml-2" onClick={e => e.stopPropagation()}>
                         <input
                             value={editForm.firstName} onChange={e => setEditForm(f => ({ ...f, firstName: e.target.value }))}
                             placeholder="First Name"
@@ -438,13 +438,13 @@ const YearView = ({ year, onBack }) => {
 
             {/* Two Big Boxes */}
             {isLoading && !state.years[year] ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {[1, 2].map(i => (
                         <div key={i} className="h-64 bg-white rounded-[2.5rem] border border-slate-50 animate-pulse" />
                     ))}
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {/* Members Box */}
                     <motion.div
                         whileHover={{ y: -4 }}
@@ -547,7 +547,7 @@ const YearSelector = ({ onSelect }) => (
             <p className="text-sm text-slate-400 font-bold mt-1 uppercase tracking-widest">Select an academic year to manage</p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-6">
             {YEARS.map((year, i) => (
                 <motion.div
                     key={year}
