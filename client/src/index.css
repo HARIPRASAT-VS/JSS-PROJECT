@@ -61,12 +61,12 @@ input:focus {
    component-level breakpoint logic. */
 @media (max-width: 1023px) {
   /* Prevent sidebar from pushing main content */
-  aside.lg\:translate-x-0 {
+  aside[class*="lg:translate-x-0"] {
     display: none !important;
   }
   
   /* Reset margins typically applied on desktop */
-  .lg\:ml-64 {
+  [class*="lg:ml-64"] {
     margin-left: 0 !important;
   }
   
@@ -76,7 +76,7 @@ input:focus {
   }
 
   /* Compact spacing for mobile headers */
-  .lg\:items-end {
-    @apply items-start !important;
+  [class*="lg:items-end"] {
+    align-items: flex-start !important;
   }
 }
