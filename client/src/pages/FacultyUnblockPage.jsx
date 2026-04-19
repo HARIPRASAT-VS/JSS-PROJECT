@@ -26,10 +26,16 @@ const FacultyUnblockPage = () => {
                 API.get('/faculty/blocked-students'),
                 API.get('/faculty/unblock-history')
             ]);
-            setBlockedStudents(blockedRes.data);
-            setHistory(historyRes.data);
+            
+            const blockedData = blockedRes.data.success ? blockedRes.data.data : blockedRes.data;
+            const historyData = historyRes.data.success ? historyRes.data.data : historyRes.data;
+
+            setBlockedStudents(Array.isArray(blockedData) ? blockedData : []);
+            setHistory(Array.isArray(historyData) ? historyData : []);
         } catch (err) {
             console.error('Fetch error:', err);
+            setBlockedStudents([]);
+            setHistory([]);
         } finally {
             setLoading(false);
         }
