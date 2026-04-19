@@ -20,6 +20,13 @@ const CheckInCard = () => {
     useEffect(() => {
         fetchStatus();
         fetchActiveOtp();
+
+        const handleGlobalOtpAction = () => {
+            setShowOtpScreen(true);
+        };
+
+        window.addEventListener('open-otp-entry', handleGlobalOtpAction);
+        return () => window.removeEventListener('open-otp-entry', handleGlobalOtpAction);
     }, []);
 
     useEffect(() => {
@@ -191,7 +198,7 @@ const CheckInCard = () => {
                             )}
                             <button 
                                 onClick={() => setShowOtpScreen(true)}
-                                className="w-full px-8 py-4 bg-primary text-white font-bold rounded-2xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                                className="w-full px-8 py-4 bg-[#1e1b4b] text-white font-bold rounded-2xl shadow-lg shadow-indigo-900/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
                             >
                                 <span className="material-symbols-outlined">qr_code_scanner</span>
                                 <span>Proceed to Check-In</span>
@@ -214,7 +221,7 @@ const CheckInCard = () => {
                         className="fixed inset-0 z-[100] flex flex-col bg-slate-50 overflow-hidden"
                     >
                         {/* Header */}
-                        <div className="bg-[#8b5cf6] text-white p-4 flex items-center shadow-md pb-6 relative">
+                        <div className="bg-[#1e1b4b] text-white p-4 flex items-center shadow-md pb-6 relative">
                             <button onClick={() => setShowOtpScreen(false)} className="p-2 absolute left-2 hover:bg-white/10 rounded-full transition-colors">
                                 <span className="material-symbols-outlined">arrow_back</span>
                             </button>
@@ -232,10 +239,10 @@ const CheckInCard = () => {
                             )}
                             
                             {activeOtpCode && (
-                                <div className="mt-4 bg-[#8b5cf6]/10 border border-[#8b5cf6]/20 px-4 py-1.5 rounded-full flex flex-col items-center justify-center">
+                                <div className="mt-4 bg-[#1e1b4b]/10 border border-[#1e1b4b]/20 px-4 py-1.5 rounded-full flex flex-col items-center justify-center">
                                     <div className="flex items-center gap-1.5">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-[#8b5cf6] animate-pulse"></span>
-                                        <span className="text-xs font-bold text-[#8b5cf6]">Code: {activeOtpCode}</span>
+                                        <span className="w-1.5 h-1.5 rounded-full bg-[#1e1b4b] animate-pulse"></span>
+                                        <span className="text-xs font-bold text-[#1e1b4b]">Code: {activeOtpCode}</span>
                                     </div>
                                     <span className="text-[9px] font-bold text-slate-400 uppercase mt-0.5">Ends in: <span className="font-mono">{timeLeft}</span></span>
                                 </div>
@@ -246,7 +253,7 @@ const CheckInCard = () => {
                                 {[...Array(6)].map((_, i) => (
                                     <div 
                                         key={i} 
-                                        className={`w-[45px] h-[55px] rounded-xl flex items-center justify-center text-2xl font-bold mx-0.5 border-2 transition-all ${otp.length === i ? 'border-[#8b5cf6] bg-white ring-4 ring-[#8b5cf6]/10' : otp[i] ? 'border-transparent bg-white shadow-sm' : 'border-slate-200 bg-slate-50 text-slate-300'}`}
+                                        className={`w-[45px] h-[55px] rounded-xl flex items-center justify-center text-2xl font-bold mx-0.5 border-2 transition-all ${otp.length === i ? 'border-[#1e1b4b] bg-white ring-4 ring-[#1e1b4b]/10' : otp[i] ? 'border-transparent bg-white shadow-sm' : 'border-slate-200 bg-slate-50 text-slate-300'}`}
                                     >
                                         <motion.span initial={{ scale: 0 }} animate={{ scale: otp[i] ? 1 : 0 }} className="text-slate-800">
                                             {otp[i] || ''}
@@ -259,7 +266,7 @@ const CheckInCard = () => {
                             <div className="flex flex-col items-center mt-2">
                                 <p className="text-xs text-slate-400 font-medium">{otp.length}/6 digits entered</p>
                                 <div className="w-24 h-1 bg-slate-200 mt-2 rounded-full overflow-hidden">
-                                    <div className="h-full bg-[#8b5cf6] transition-all" style={{ width: `${(otp.length / 6) * 100}%` }}></div>
+                                    <div className="h-full bg-[#1e1b4b] transition-all" style={{ width: `${(otp.length / 6) * 100}%` }}></div>
                                 </div>
                             </div>
 
@@ -295,7 +302,7 @@ const CheckInCard = () => {
                                     <button 
                                         onClick={handleCheckIn}
                                         disabled={otp.length !== 6 || isCheckingIn}
-                                        className={`w-16 h-16 rounded-full flex items-center justify-center shadow-lg transition-colors ${otp.length === 6 && !isCheckingIn ? 'bg-[#8b5cf6] text-white hover:bg-[#7c3aed]' : 'bg-slate-200 text-slate-400'}`}
+                                        className={`w-16 h-16 rounded-full flex items-center justify-center shadow-lg transition-colors ${otp.length === 6 && !isCheckingIn ? 'bg-[#1e1b4b] text-white hover:bg-[#1e1b4b]/90' : 'bg-slate-200 text-slate-400'}`}
                                     >
                                         {isCheckingIn ? (
                                             <span className="material-symbols-outlined animate-spin">refresh</span>

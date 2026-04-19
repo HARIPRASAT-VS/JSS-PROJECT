@@ -78,7 +78,7 @@ const AttendancePage = () => {
                     type="date" 
                     value={selectedDate} 
                     onChange={(e) => setSelectedDate(e.target.value)}
-                    className="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-bold text-[#5b3eb5] focus:outline-none focus:ring-2 focus:ring-[#5b3eb5]/20"
+                    className="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-bold text-[#1e1b4b] focus:outline-none focus:ring-2 focus:ring-[#1e1b4b]/20"
                 />
             </div>
 

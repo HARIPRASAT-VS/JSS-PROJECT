@@ -192,28 +192,37 @@ const LeaveManagementPage = () => {
         Rejected: 'bg-red-50 text-red-600 border-red-200',
     }[s] || 'bg-slate-100 text-slate-500 border-slate-200');
 
+    const [showHistory, setShowHistory] = useState(true);
+
     return (
         <div className="p-3 md:p-6 space-y-6 max-w-7xl mx-auto w-full relative z-10 hidden-scrollbar pb-24">
             {/* Page Header */}
             <section className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div className="space-y-1">
-                    <p className="text-primary font-semibold tracking-wider text-[10px] md:text-xs uppercase">Management Console</p>
-                    <h3 className="text-2xl md:text-4xl font-extrabold text-slate-800 tracking-tight">Leave Requests</h3>
+                    <p className="text-[#5b3eb5] font-semibold tracking-wider text-[10px] md:text-xs uppercase">Management Console</p>
+                    <h3 className="text-2xl md:text-4xl font-extrabold text-slate-800 tracking-tight">Leave Approval</h3>
                 </div>
-                {studentYear && (
-                    <div className="bg-indigo-50 border border-indigo-100 px-4 py-2 rounded-xl flex items-center gap-2">
-                        <span className="material-symbols-outlined text-indigo-400 text-[18px]">school</span>
-                        <div>
-                            <p className="text-[9px] font-black text-indigo-400 uppercase tracking-widest">Your Year</p>
-                            <p className="text-xs font-black text-indigo-900">{studentYear}</p>
-                        </div>
-                    </div>
-                )}
+                <div className="flex items-center gap-2">
+                    <button 
+                        onClick={() => setShowHistory(true)}
+                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${showHistory ? 'bg-[#1e1b4b] text-white shadow-lg shadow-indigo-900/20' : 'bg-white text-slate-500 border border-slate-100'}`}
+                    >
+                        History
+                    </button>
+                    <button 
+                        onClick={() => setShowHistory(false)}
+                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${!showHistory ? 'bg-[#1e1b4b] text-white shadow-lg shadow-indigo-900/20' : 'bg-white text-slate-500 border border-slate-100'}`}
+                    >
+                        Request
+                    </button>
+                </div>
             </section>
 
             <div className="flex flex-col lg:flex-row gap-6">
-                {/* Application Form */}
-                <div className="w-full lg:w-5/12">
+                {/* Application Form - Hidden if showing history on mobile */}
+                <AnimatePresence mode="wait">
+                    {!showHistory ? (
+                        <div className="w-full lg:w-5/12">
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -340,39 +349,41 @@ const LeaveManagementPage = () => {
                                     : 'Submit Request'}
                             </button>
                         </form>
-                    </motion.div>
-                </div>
+                    )}
 
-                {/* Leave History */}
-                <div className="w-full lg:w-7/12">
-                    <motion.div
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="bg-white rounded-[1.5rem] overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.04)] border border-slate-100 flex flex-col h-full min-h-[400px]"
-                    >
-                        <div className="p-5 md:p-8 pb-3 md:pb-4 flex items-center justify-between border-b border-slate-50">
-                            <h4 className="text-lg md:text-xl font-bold text-indigo-900">Leave History</h4>
-                            <span className="bg-slate-50 text-slate-500 px-3 py-1 rounded-full text-[10px] font-bold">
-                                {history.length} Requests
-                            </span>
-                        </div>
-
-                        <div className="flex-1 overflow-y-auto p-4 md:p-8 pt-4 space-y-3 hidden-scrollbar">
-                            {history.length === 0 ? (
-                                <div className="flex flex-col items-center justify-center py-16 text-center">
-                                    <span className="material-symbols-outlined text-5xl text-slate-200 mb-4">inbox</span>
-                                    <p className="text-sm text-slate-400 font-medium">No leave requests submitted yet</p>
+                    {/* Leave History - Always visible on desktop, or if showHistory is true on mobile */}
+                    {(showHistory || window.innerWidth > 1024) && (
+                        <div className="w-full lg:w-7/12">
+                            <motion.div
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                className="bg-white rounded-[1.5rem] overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.04)] border border-slate-100 flex flex-col h-full min-h-[400px]"
+                            >
+                                <div className="p-5 md:p-8 pb-3 md:pb-4 flex items-center justify-between border-b border-slate-50">
+                                    <h4 className="text-lg md:text-xl font-bold text-indigo-900">Leave History</h4>
+                                    <span className="bg-slate-50 text-slate-500 px-3 py-1 rounded-full text-[10px] font-bold">
+                                        {history.length} Requests
+                                    </span>
                                 </div>
-                            ) : (
-                                <AnimatePresence>
-                                    {history.map((item, i) => (
-                                        <StudentLeaveCard key={item._id || i} item={item} statusStyle={statusStyle} />
-                                    ))}
-                                </AnimatePresence>
-                            )}
+
+                                <div className="flex-1 overflow-y-auto p-4 md:p-8 pt-4 space-y-3 hidden-scrollbar">
+                                    {history.length === 0 ? (
+                                        <div className="flex flex-col items-center justify-center py-16 text-center">
+                                            <span className="material-symbols-outlined text-5xl text-slate-200 mb-4">inbox</span>
+                                            <p className="text-sm text-slate-400 font-medium">No leave requests submitted yet</p>
+                                        </div>
+                                    ) : (
+                                        <AnimatePresence>
+                                            {history.map((item, i) => (
+                                                <StudentLeaveCard key={item._id || i} item={item} statusStyle={statusStyle} />
+                                            ))}
+                                        </AnimatePresence>
+                                    )}
+                                </div>
+                            </motion.div>
                         </div>
-                    </motion.div>
-                </div>
+                    )}
+                </AnimatePresence>
             </div>
         </div>
     );

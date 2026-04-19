@@ -4,13 +4,16 @@ import SideNavBar from './SideNavBar';
 import TopAppBar from './TopAppBar';
 import BottomNavBar from './BottomNavBar';
 
+import { AuthContext } from '../context/AuthContext';
+
 const AppLayout = () => {
+    const { user } = React.useContext(AuthContext);
     return (
         <div className="flex h-screen bg-slate-50 overflow-hidden text-slate-800 selection:bg-indigo-100 font-sans">
-            <SideNavBar />
+            {user?.role !== 'student' && <SideNavBar />}
             
             {/* Main content area */}
-            <div className="flex-1 flex flex-col md:ml-64 w-full relative">
+            <div className={`flex-1 flex flex-col ${user?.role !== 'student' ? 'md:ml-64' : ''} w-full relative`}>
                 <TopAppBar />
                 
                 {/* Scrollable container for page content */}
