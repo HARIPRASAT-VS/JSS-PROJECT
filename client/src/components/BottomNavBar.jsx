@@ -13,15 +13,15 @@ const BottomNavBar = () => {
     const studentItems = [
         ...commonItems,
         { label: 'Classes', icon: 'grid_view', path: '/attendance' },
-        { label: 'Leave Approval', icon: 'rule', path: '/leave' }, // Replaced Calendar with Leave Approval
-        { label: 'Profile', icon: 'person', path: '#', inactive: true }, // Added Profile (inactive)
+        { label: 'Leaves', icon: 'rule', path: '/leave' },
+        { label: 'Report', icon: 'analytics', path: '/attendance/detail' }, // Added Report for students
     ];
 
     const facultyItems = [
         ...commonItems,
         { label: 'Leaves', icon: 'rule', path: '/leave' },
-        { label: 'Marks', icon: 'grade', path: '/faculty/marks' },
         { label: 'Users', icon: 'person_search', path: '/faculty/unblock' },
+        { label: 'Reports', icon: 'analytics', path: '/faculty/reports' }, // Added Reports for faculty
     ];
 
     const adminItems = [
@@ -53,10 +53,6 @@ const BottomNavBar = () => {
 
     return (
         <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-slate-100 pb-safe z-[60] shadow-[0_-4px_24px_rgba(0,0,0,0.04)]">
-            {/* Deployment Verification Marker */}
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-slate-900 text-[8px] text-white px-2 py-0.5 rounded-full font-bold uppercase tracking-wider shadow-lg border border-white/20">
-                Mobile UI v3.0
-            </div>
             <div className="flex items-center justify-around px-2 min-h-[64px] relative">
                 {navItems.map((item, idx) => {
                     const isActive = location.pathname === item.path || (item.path === '/dashboard' && location.pathname === '/');
