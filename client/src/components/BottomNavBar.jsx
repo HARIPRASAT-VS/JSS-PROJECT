@@ -20,6 +20,7 @@ const BottomNavBar = () => {
     const facultyItems = [
         ...commonItems,
         { label: 'Leaves', icon: 'rule', path: '/leave' },
+        { label: 'Marks', icon: 'grade', path: '/faculty/marks' },
         { label: 'Users', icon: 'person_search', path: '/faculty/unblock' },
         { label: 'Reports', icon: 'analytics', path: '/faculty/reports' }, // Added Reports for faculty
     ];
@@ -77,16 +78,19 @@ const BottomNavBar = () => {
                                 */}
                                 <div className="w-14 h-full pointer-events-none" />
 
-                                <div 
+                                 <div 
                                     key={idx} 
-                                    className={`flex flex-col items-center justify-center p-2 min-w-[64px] min-h-[48px] rounded-xl transition-all duration-200 ${
+                                    className={`flex flex-col items-center justify-center p-2 min-w-[64px] min-h-[48px] rounded-xl transition-all duration-200 select-none ${
                                         item.inactive ? 'opacity-50 cursor-not-allowed' : 'active:scale-95'
                                     } ${isActive ? 'text-indigo-600' : 'text-slate-400'}`}
                                 >
-                                    <span className={`material-symbols-outlined text-[24px] mb-1 transition-all duration-200 ${isActive ? 'fill-1 scale-110 drop-shadow-sm' : ''}`}>
+                                    <span 
+                                        aria-hidden="true"
+                                        className={`material-symbols-outlined text-[24px] mb-1 transition-all duration-200 select-none pointer-events-none ${isActive ? 'fill-1 scale-110 drop-shadow-sm' : ''}`}
+                                    >
                                         {item.icon}
                                     </span>
-                                    <span className={`text-[10px] font-bold tracking-tight ${isActive ? 'text-indigo-700' : 'text-slate-400'}`}>
+                                    <span className={`text-[10px] font-bold tracking-tight select-none pointer-events-none ${isActive ? 'text-indigo-700' : 'text-slate-400'}`}>
                                         {item.label}
                                     </span>
                                 </div>
@@ -98,14 +102,17 @@ const BottomNavBar = () => {
                         <div 
                             key={idx} 
                             onClick={() => !item.inactive && navigate(item.path)}
-                            className={`flex flex-col items-center justify-center p-2 min-w-[64px] min-h-[48px] rounded-xl transition-all duration-200 ${
+                            className={`flex flex-col items-center justify-center p-2 min-w-[64px] min-h-[48px] rounded-xl transition-all duration-200 select-none ${
                                 item.inactive ? 'opacity-50 cursor-default' : 'active:scale-95 cursor-pointer'
                             } ${isActive ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}
                         >
-                            <span className={`material-symbols-outlined text-[24px] mb-1 transition-all duration-200 ${isActive ? 'fill-1 scale-110 drop-shadow-sm' : ''}`}>
+                            <span 
+                                aria-hidden="true"
+                                className={`material-symbols-outlined text-[24px] mb-1 transition-all duration-200 select-none pointer-events-none ${isActive ? 'fill-1 scale-110 drop-shadow-sm' : ''}`}
+                            >
                                 {item.icon}
                             </span>
-                            <span className={`text-[10px] font-bold tracking-tight ${isActive ? 'text-indigo-700' : 'text-slate-400'}`}>
+                            <span className={`text-[10px] font-bold tracking-tight select-none pointer-events-none ${isActive ? 'text-indigo-700' : 'text-slate-400'}`}>
                                 {item.label}
                             </span>
                         </div>

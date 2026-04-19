@@ -324,8 +324,6 @@ const FacultyLeaveApproval = () => {
 
     return (
         <div className="p-2 md:p-6 space-y-4 md:space-y-6 max-w-7xl mx-auto w-full relative z-10 pb-24 overflow-x-hidden">
-            {/* DEBUG TAG - REMOVE LATER */}
-            <div className="fixed top-20 right-2 z-50 bg-indigo-600 text-white text-[8px] px-2 py-0.5 rounded-full font-bold uppercase shadow-lg pointer-events-none">Mobile UI V2</div>
 
             {/* PAGE HEADER */}
             <section className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
