@@ -102,4 +102,64 @@ router.post('/leaves', protect, async (req, res) => {
     }
 });
 
+const AcademicTest = require('../models/AcademicTest');
+
+// ─── GET /api/student/tests ───────────────────────────────────────────────────
+// Returns list of tests where the student has a recorded score
+router.get('/tests', protect, async (req, res) => {
+    try {
+        const { type } = req.query;
+        if (!type) return res.status(400).json({ message: 'Test type is required.' });
+
+        const tests = await AcademicTest.find({
+            testType: type,
+            'scores.studentId': req.user.id
+        })
+        .select('_id testName totalMarks testDate testType')
+        .sort({ testDate: -1 })
+        .lean();
+
+        res.json({ success: true, data: tests });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ─── GET /api/student/tests/:testId ───────────────────────────────────────────
+// Returns detailed score for the student and overall class average
+router.get('/tests/:testId', protect, async (req, res) => {
+    try {
+        const test = await AcademicTest.findById(req.params.testId)
+            .populate('facultyId', 'firstName lastName')
+            .lean();
+
+        if (!test) return res.status(404).json({ message: 'Test record not found.' });
+
+        // Find the specific student's score
+        const myScore = test.scores.find(s => String(s.studentId) === String(req.user.id));
+        if (!myScore) return res.status(403).json({ message: 'You are not part of this assessment record.' });
+
+        // Calculate class average from valid (present) marks
+        const presentScores = test.scores.filter(s => !s.marks.isAbsent && s.marks.value !== null);
+        const average = presentScores.length > 0 
+            ? (presentScores.reduce((acc, s) => acc + s.marks.value, 0) / presentScores.length).toFixed(1)
+            : 0;
+
+        res.json({
+            success: true,
+            data: {
+                testName: test.testName,
+                testType: test.testType,
+                testDate: test.testDate,
+                totalMarks: test.totalMarks,
+                facultyName: `${test.facultyId?.firstName} ${test.facultyId?.lastName}`,
+                myScore: myScore.marks,
+                classAverage: parseFloat(average)
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 module.exports = router;

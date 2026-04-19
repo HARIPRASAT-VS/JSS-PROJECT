@@ -14,7 +14,7 @@ const BottomNavBar = () => {
         ...commonItems,
         { label: 'Classes', icon: 'grid_view', path: '/attendance' },
         { label: 'Leaves', icon: 'rule', path: '/leave' },
-        { label: 'Report', icon: 'analytics', path: '/attendance/detail' }, // Added Report for students
+        { label: 'Report', icon: 'analytics', path: '/student/reports' }, // Updated to student-specific reports
     ];
 
     const facultyItems = [
@@ -80,8 +80,9 @@ const BottomNavBar = () => {
 
                                  <div 
                                     key={idx} 
+                                    onClick={() => !item.inactive && navigate(item.path)}
                                     className={`flex flex-col items-center justify-center p-2 min-w-[64px] min-h-[48px] rounded-xl transition-all duration-200 select-none ${
-                                        item.inactive ? 'opacity-50 cursor-not-allowed' : 'active:scale-95'
+                                        item.inactive ? 'opacity-50 cursor-not-allowed' : 'active:scale-95 cursor-pointer'
                                     } ${isActive ? 'text-indigo-600' : 'text-slate-400'}`}
                                 >
                                     <span 

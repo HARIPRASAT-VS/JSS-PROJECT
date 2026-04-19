@@ -22,6 +22,7 @@ import ParentMarks from './pages/ParentMarks';
 import ParentLeave from './pages/ParentLeave';
 import ParentFees from './pages/ParentFees';
 import FacultyUnblockPage from './pages/FacultyUnblockPage';
+import StudentReports from './pages/StudentReports';
 
 function App() {
   const { user } = useContext(AuthContext);
@@ -65,6 +66,23 @@ function App() {
             <Route path="/attendance/detail" element={
                 <ProtectedRoute allowedRoles={['student']}>
                     <AttendanceDetail />
+                </ProtectedRoute>
+            } />
+
+            {/* Student Reporting Routes */}
+            <Route path="/student/reports" element={
+                <ProtectedRoute allowedRoles={['student']}>
+                    <StudentReports />
+                </ProtectedRoute>
+            } />
+            <Route path="/student/reports/:type" element={
+                <ProtectedRoute allowedRoles={['student']}>
+                    <StudentReports />
+                </ProtectedRoute>
+            } />
+            <Route path="/student/reports/:type/:testId" element={
+                <ProtectedRoute allowedRoles={['student']}>
+                    <StudentReports />
                 </ProtectedRoute>
             } />
 
