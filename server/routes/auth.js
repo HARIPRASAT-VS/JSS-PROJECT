@@ -7,9 +7,9 @@ const User = require('../models/User');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-// Helper: Generate JWT
-const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+// Helper: Generate JWT — include role and email so middleware can check permissions without extra DB calls
+const generateToken = (user) => {
+    return jwt.sign({ id: user._id, role: user.role, email: user.email }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
 
 // @route   POST api/auth/signup
@@ -29,7 +29,7 @@ router.post('/signup', async (req, res) => {
             lastName: user.lastName, 
             email: user.email, 
             role: user.role,
-            token: generateToken(user._id) 
+            token: generateToken(user) 
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -46,7 +46,7 @@ router.post('/login', async (req, res) => {
                 user.fcmToken = fcmToken;
                 await user.save();
             }
-            res.json({ _id: user._id, firstName: user.firstName, lastName: user.lastName, email: user.email, role: user.role, token: generateToken(user._id) });
+            res.json({ _id: user._id, firstName: user.firstName, lastName: user.lastName, email: user.email, role: user.role, token: generateToken(user) });
         } else {
             res.status(401).json({ message: 'Incorrect email or password' });
         }
@@ -123,7 +123,7 @@ router.post('/google', async (req, res) => {
             lastName: user.lastName, 
             email: user.email, 
             role: user.role, 
-            token: generateToken(user._id) 
+            token: generateToken(user) 
         });
     } catch (error) {
         console.error('CRITICAL: Google Auth Error:', error.message);
