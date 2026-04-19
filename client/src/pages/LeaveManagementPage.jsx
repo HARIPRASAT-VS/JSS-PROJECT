@@ -13,8 +13,21 @@ const getExactDateTime = (dateStr, timeStr) => {
     return d;
 };
 
+const getLeaveStatus = (item) => {
+    if (item.status === 'Rejected') return 'Rejected';
+    if (item.status === 'Pending') return 'Pending';
+    
+    const now = new Date();
+    const from = getExactDateTime(item.startDate || item.fromDate, item.startTime);
+    const to = getExactDateTime(item.endDate || item.toDate, item.endTime);
+    
+    if (now > to) return 'Expired';
+    if (now >= from && now <= to) return 'Active';
+    return 'Upcoming';
+};
+
 const StudentLeaveCard = ({ item, statusStyle }) => {
-    const [liveStat, setLiveStat] = useState(item.status);
+    const [liveStat, setLiveStat] = useState(getLeaveStatus(item));
     const [countdown, setCountdown] = useState('');
 
     useEffect(() => {
@@ -27,7 +40,7 @@ const StudentLeaveCard = ({ item, statusStyle }) => {
                 setLiveStat('Expired');
                 setCountdown('');
             } else if (now >= from && now <= to) {
-                setLiveStat('Ongoing');
+                setLiveStat('Active');
                 const diffMs = to - now;
                 const d = Math.floor(diffMs / (1000 * 60 * 60 * 24));
                 const h = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -79,7 +92,7 @@ const StudentLeaveCard = ({ item, statusStyle }) => {
             
             <div className="flex flex-col items-end gap-1.5">
                 <span className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${
-                    liveStat === 'Ongoing' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                    liveStat === 'Active' ? 'bg-blue-50 text-blue-700 border-blue-200' :
                     liveStat === 'Expired' ? 'bg-slate-100 text-slate-500 border-slate-200' :
                     liveStat === 'Upcoming' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' :
                     statusStyle(liveStat)
@@ -116,6 +129,7 @@ const LeaveManagementPage = () => {
     const [facLoading, setFacLoading] = useState(true);
 
     const [history, setHistory] = useState([]);
+    const [filter, setFilter] = useState('All');
 
     useEffect(() => {
         fetchYearFaculties();
@@ -130,6 +144,17 @@ const LeaveManagementPage = () => {
             console.error('Could not fetch leave history', err);
         }
     };
+
+    const filteredHistory = React.useMemo(() => {
+        if (filter === 'All') return history;
+        return history.filter(item => {
+            const status = getLeaveStatus(item);
+            if (filter === 'Active') return status === 'Active' || status === 'Upcoming';
+            if (filter === 'Expired') return status === 'Expired';
+            if (filter === 'Rejected') return status === 'Rejected';
+            return true;
+        });
+    }, [history, filter]);
 
     const fetchYearFaculties = async () => {
         setFacLoading(true);
@@ -186,7 +211,6 @@ const LeaveManagementPage = () => {
             setSubmitting(false);
         }
     };
-
     const statusStyle = (s) => ({
         Pending:  'bg-amber-50 text-amber-700 border-amber-200',
         Approved: 'bg-emerald-50 text-emerald-700 border-emerald-200',
@@ -200,21 +224,21 @@ const LeaveManagementPage = () => {
             {/* Page Header */}
             <section className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
                 <div className="space-y-1">
-                    <p className="text-[#5b3eb5] font-semibold tracking-wider text-[10px] lg:text-xs uppercase">Management Console</p>
-                    <h3 className="text-2xl lg:text-4xl font-extrabold text-slate-800 tracking-tight">Leave Approval</h3>
+                    <p className="text-[#5b3eb5] font-semibold tracking-wider text-[10px] lg:text-xs uppercase">Student Portal</p>
+                    <h3 className="text-2xl lg:text-4xl font-extrabold text-slate-800 tracking-tight">Leave Management</h3>
                 </div>
                 <div className="flex items-center gap-2 lg:hidden">
                     <button 
                         onClick={() => setShowHistory(true)}
                         className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${showHistory ? 'bg-[#1e1b4b] text-white shadow-lg shadow-indigo-900/20' : 'bg-white text-slate-500 border border-slate-100'}`}
                     >
-                        History
+                        View History
                     </button>
                     <button 
                         onClick={() => setShowHistory(false)}
                         className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${!showHistory ? 'bg-[#1e1b4b] text-white shadow-lg shadow-indigo-900/20' : 'bg-white text-slate-500 border border-slate-100'}`}
                     >
-                        Request
+                        New Request
                     </button>
                 </div>
             </section>
@@ -229,7 +253,7 @@ const LeaveManagementPage = () => {
                     >
                         <h4 className="text-lg font-bold text-indigo-900 mb-6 flex items-center gap-2">
                             <span className="material-symbols-outlined text-primary text-[20px]">add_circle</span>
-                            Apply Leave
+                            Leave Request
                         </h4>
 
                         <AnimatePresence>
@@ -358,22 +382,41 @@ const LeaveManagementPage = () => {
                         animate={{ opacity: 1, x: 0 }}
                         className="bg-white rounded-[1.5rem] overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.04)] border border-slate-100 flex flex-col h-full min-h-[400px]"
                     >
-                        <div className="p-5 lg:p-8 pb-3 lg:pb-4 flex items-center justify-between border-b border-slate-50">
-                            <h4 className="text-lg lg:text-xl font-bold text-indigo-900">Leave History</h4>
-                            <span className="bg-slate-50 text-slate-500 px-3 py-1 rounded-full text-[10px] font-bold">
-                                {history.length} Requests
-                            </span>
+                        <div className="p-5 lg:p-8 pb-3 lg:pb-4 space-y-4 border-b border-slate-50">
+                            <div className="flex items-center justify-between">
+                                <h4 className="text-lg lg:text-xl font-bold text-indigo-900">Request History</h4>
+                                <span className="bg-slate-50 text-slate-500 px-3 py-1 rounded-full text-[10px] font-bold">
+                                    {filteredHistory.length} Results
+                                </span>
+                            </div>
+                            
+                            {/* Filter Chips */}
+                            <div className="flex items-center gap-2 overflow-x-auto hidden-scrollbar pb-1">
+                                {['All', 'Active', 'Expired', 'Rejected'].map(f => (
+                                    <button
+                                        key={f}
+                                        onClick={() => setFilter(f)}
+                                        className={`px-4 py-2 rounded-full text-[10px] font-bold transition-all whitespace-nowrap ${
+                                            filter === f 
+                                                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-900/20' 
+                                                : 'bg-slate-50 text-slate-400 hover:bg-slate-100'
+                                        }`}
+                                    >
+                                        {f}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
 
                         <div className="flex-1 overflow-y-auto p-4 lg:p-8 pt-4 space-y-3 hidden-scrollbar">
-                            {history.length === 0 ? (
+                            {filteredHistory.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center py-16 text-center">
                                     <span className="material-symbols-outlined text-5xl text-slate-200 mb-4">inbox</span>
-                                    <p className="text-sm text-slate-400 font-medium">No leave requests submitted yet</p>
+                                    <p className="text-sm text-slate-400 font-medium">No {filter !== 'All' ? filter.toLowerCase() : ''} requests found</p>
                                 </div>
                             ) : (
                                 <AnimatePresence>
-                                    {history.map((item, i) => (
+                                    {filteredHistory.map((item, i) => (
                                         <StudentLeaveCard key={item._id || i} item={item} statusStyle={statusStyle} />
                                     ))}
                                 </AnimatePresence>
