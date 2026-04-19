@@ -22,11 +22,27 @@ const app = express();
 const server = http.createServer(app);
 
 // Dynamic CORS configuration for both Express and Socket.io
-const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
+const ALLOWED_ORIGINS = [
+    process.env.CLIENT_URL || "http://localhost:5173",
+    "https://jss-project-omega.vercel.app",
+    "http://localhost:5173"
+];
+
+const corsOptions = {
+    origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps or curl) and allowed origins
+        if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true
+};
 
 const io = new Server(server, {
     cors: {
-        origin: CLIENT_URL,
+        origin: ALLOWED_ORIGINS,
         methods: ["GET", "POST"]
     }
 });
@@ -52,10 +68,7 @@ io.on('connection', (socket) => {
 initCronJobs(io);
 
 // Middleware
-app.use(cors({
-    origin: CLIENT_URL,
-    credentials: true
-}));
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Routes
