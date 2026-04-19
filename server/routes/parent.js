@@ -147,11 +147,26 @@ router.get('/leave', protect, async (req, res) => {
         if (!child) return res.json([]);
         const childId = child._id;
         
-        // Show all leaves for that child (not just pending) to show history
+        // Find historical and pending leaves
         const leaves = await LeaveRequest.find({ userId: childId })
             .populate('facultyId', 'firstName lastName email')
-            .sort({ createdAt: -1 });
-        res.json(leaves);
+            .sort({ createdAt: -1 })
+            .lean();
+            
+        // Calculate dynamic real-time attendance 
+        const UserAttendance = await Attendance.find({ userId: childId });
+        let liveAtt = null;
+        if (UserAttendance.length > 0) {
+            const present = UserAttendance.filter(a => a.status === 'Present' || a.status === 'Late').length;
+            liveAtt = ((present / UserAttendance.length) * 100).toFixed(1);
+        }
+
+        const leavesWithAttendance = leaves.map(leave => ({
+            ...leave,
+            liveAttendance: liveAtt
+        }));
+
+        res.json(leavesWithAttendance);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

@@ -237,8 +237,27 @@ router.get('/tests/:testId', protect, authorizeFaculty, async (req, res) => {
 // @desc    Get leave requests for faculty's students
 router.get('/leaves', protect, authorizeFaculty, async (req, res) => {
     try {
-        const leaves = await LeaveRequest.find({ facultyId: req.user.id }).populate('userId', 'firstName lastName email');
-        res.json({ success: true, data: leaves });
+        const leaves = await LeaveRequest.find({ facultyId: req.user.id })
+            .populate('userId', 'firstName lastName email')
+            .lean(); // Use lean for modifying the response
+
+        // Calculate live, dynamic attendance for each user
+        const leavesWithLiveAttendance = await Promise.all(leaves.map(async (leave) => {
+            if (leave.userId && leave.userId._id) {
+                const UserAttendance = await Attendance.find({ userId: leave.userId._id });
+                if (UserAttendance.length > 0) {
+                    const present = UserAttendance.filter(a => a.status === 'Present' || a.status === 'Late').length;
+                    leave.liveAttendance = ((present / UserAttendance.length) * 100).toFixed(1);
+                } else {
+                    leave.liveAttendance = null;
+                }
+            } else {
+                leave.liveAttendance = null;
+            }
+            return leave;
+        }));
+
+        res.json({ success: true, data: leavesWithLiveAttendance });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }

@@ -158,12 +158,13 @@ const LeaveCard = ({ leave, showActions, onAction, actioning }) => {
                     </p>
                 </div>
                 <div>
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Attendance</p>
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Live Attendance</p>
                     <p className={`text-xs font-black ${
-                        parseFloat(attendance) < 75 ? 'text-red-600' :
-                        parseFloat(attendance) < 85 ? 'text-amber-600' :
-                        'text-emerald-600'
-                    }`}>{attendance}</p>
+                         leave.liveAttendance === null ? 'text-slate-500' :
+                         parseFloat(leave.liveAttendance) < 75 ? 'text-red-600' :
+                         parseFloat(leave.liveAttendance) < 85 ? 'text-amber-600' :
+                         'text-emerald-600'
+                    }`}>{leave.liveAttendance ? `${leave.liveAttendance}%` : '—'}</p>
                 </div>
                 <div>
                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Submitted</p>

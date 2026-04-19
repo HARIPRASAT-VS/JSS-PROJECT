@@ -49,12 +49,11 @@ const ParentLeave = () => {
     };
 
     const pendingLeaves = leaves.filter(l => l.parentStatus === 'Pending');
-    const historyLeaves = leaves.filter(l => l.parentStatus !== 'Pending');
 
-    const LeaveCard = ({ leave, isPending }) => (
+    const LeaveCard = ({ leave }) => (
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col md:flex-row gap-6 animate-in slide-in-from-right-4 duration-500">
             {/* Leave Type Icon */}
-            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 ${isPending ? 'bg-amber-50 text-amber-500' : 'bg-slate-50 text-slate-400'}`}>
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 bg-amber-50 text-amber-500">
                 <span className="material-symbols-outlined text-3xl">
                     {leave.type === 'Sick Leave' ? 'medical_services' : 'event_busy'}
                 </span>
@@ -68,65 +67,57 @@ const ParentLeave = () => {
                         <p className="text-slate-500 mt-1">{leave.reason}</p>
                     </div>
                     <div className="flex flex-col gap-2 items-end">
-                        {isPending ? (
-                            <span className="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse">
-                                Parent Action Required
-                            </span>
-                        ) : (
-                            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                                leave.parentStatus === 'Approved' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
-                            }`}>
-                                Parent {leave.parentStatus}
-                            </span>
-                        )}
-                        {!isPending && (
-                            <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border ${
-                                leave.status === 'Approved' ? 'border-emerald-200 text-emerald-600' :
-                                leave.status === 'Rejected' ? 'border-rose-200 text-rose-600' :
-                                'border-amber-200 text-amber-600'
-                            }`}>
-                                Faculty {leave.status}
-                            </span>
-                        )}
+                        <span className="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse">
+                            Parent Action Required
+                        </span>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 py-4 border-y border-slate-50">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-4 border-y border-slate-50">
                     <div>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Duration</p>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Duration</p>
                         <p className="font-bold text-slate-700 text-sm">
                             {new Date(leave.startDate).toLocaleDateString()} - {new Date(leave.endDate).toLocaleDateString()}
                         </p>
                     </div>
                     <div>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Timings</p>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Timings</p>
                         <p className="font-bold text-slate-700 text-sm">{leave.startTime} to {leave.endTime}</p>
                     </div>
-                    <div className="col-span-2 md:col-span-1">
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Assignee</p>
+                    <div>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Live Attendance</p>
+                        <p className={`font-black text-sm ${
+                             leave.liveAttendance === null ? 'text-slate-500' :
+                             parseFloat(leave.liveAttendance) < 75 ? 'text-red-600' :
+                             parseFloat(leave.liveAttendance) < 85 ? 'text-amber-600' :
+                             'text-emerald-600'
+                        }`}>
+                            {leave.liveAttendance ? `${leave.liveAttendance}%` : '—'}
+                        </p>
+                    </div>
+                    <div>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Assignee</p>
                         <p className="font-bold text-slate-700 text-sm">Faculty: {leave.facultyId?.firstName}</p>
                     </div>
                 </div>
 
-                {/* Action Buttons ONLY for pending */}
-                {isPending && (
-                    <div className="flex gap-3 pt-2">
-                        <button 
-                            onClick={() => handleAction(leave._id, 'approve')}
-                            className="flex-1 bg-emerald-500 text-white font-bold py-3 rounded-2xl hover:bg-emerald-600 transition-all flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-emerald-500/20"
-                        >
-                            <span className="material-symbols-outlined">check</span>
-                            Approve
-                        </button>
-                        <button 
-                            onClick={() => handleAction(leave._id, 'reject')}
-                            className="flex-1 bg-white border border-rose-200 text-rose-500 font-bold py-3 rounded-2xl hover:bg-rose-50 transition-all flex items-center justify-center gap-2"
-                        >
-                            <span className="material-symbols-outlined">close</span>
-                            Reject
-                        </button>
-                    </div>
-                )}
+                {/* Action Buttons */}
+                <div className="flex gap-3 pt-2">
+                    <button 
+                        onClick={() => handleAction(leave._id, 'approve')}
+                        className="flex-1 bg-emerald-500 text-white font-bold py-3 rounded-2xl hover:bg-emerald-600 transition-all flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-emerald-500/20"
+                    >
+                        <span className="material-symbols-outlined">check</span>
+                        Approve
+                    </button>
+                    <button 
+                        onClick={() => handleAction(leave._id, 'reject')}
+                        className="flex-1 bg-white border border-rose-200 text-rose-500 font-bold py-3 rounded-2xl hover:bg-rose-50 transition-all flex items-center justify-center gap-2"
+                    >
+                        <span className="material-symbols-outlined">close</span>
+                        Reject
+                    </button>
+                </div>
             </div>
         </div>
     );
@@ -144,42 +135,26 @@ const ParentLeave = () => {
                                 <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
                             </div>
                         ) : (
-                            <>
-                                {/* PENDING SECTION */}
-                                <section>
-                                    <div className="mb-6">
-                                        <h2 className="text-2xl font-black text-slate-800 tracking-tight">Pending Approval</h2>
-                                        <p className="text-slate-500 font-medium">Review and authorize your child's leave requests.</p>
+                            <section>
+                                <div className="mb-6">
+                                    <h2 className="text-2xl font-black text-slate-800 tracking-tight">Pending Approval</h2>
+                                    <p className="text-slate-500 font-medium">Review and authorize your child's leave requests.</p>
+                                </div>
+
+                                {pendingLeaves.length === 0 ? (
+                                    <div className="bg-white rounded-3xl p-12 text-center border border-dashed border-slate-200">
+                                        <div className="w-16 h-16 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <span className="material-symbols-outlined text-4xl">check_circle</span>
+                                        </div>
+                                        <h3 className="text-lg font-bold text-slate-800">No Pending Requests</h3>
+                                        <p className="text-slate-400">Everything is caught up.</p>
                                     </div>
-
-                                    {pendingLeaves.length === 0 ? (
-                                        <div className="bg-white rounded-3xl p-12 text-center border border-dashed border-slate-200">
-                                            <div className="w-16 h-16 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mx-auto mb-4">
-                                                <span className="material-symbols-outlined text-4xl">check_circle</span>
-                                            </div>
-                                            <h3 className="text-lg font-bold text-slate-800">No Pending Requests</h3>
-                                            <p className="text-slate-400">Everything is caught up.</p>
-                                        </div>
-                                    ) : (
-                                        <div className="space-y-4">
-                                            {pendingLeaves.map(leave => <LeaveCard key={leave._id} leave={leave} isPending={true} />)}
-                                        </div>
-                                    )}
-                                </section>
-
-                                {/* HISTORY SECTION */}
-                                {historyLeaves.length > 0 && (
-                                    <section className="pt-8 border-t border-slate-200/60">
-                                        <div className="mb-6">
-                                            <h2 className="text-xl font-black text-slate-800 tracking-tight">Authorization History</h2>
-                                            <p className="text-slate-500 text-sm font-medium">Previous actions taken by you.</p>
-                                        </div>
-                                        <div className="space-y-4 opacity-80">
-                                            {historyLeaves.map(leave => <LeaveCard key={leave._id} leave={leave} isPending={false} />)}
-                                        </div>
-                                    </section>
+                                ) : (
+                                    <div className="space-y-4">
+                                        {pendingLeaves.map(leave => <LeaveCard key={leave._id} leave={leave} />)}
+                                    </div>
                                 )}
-                            </>
+                            </section>
                         )}
                     </div>
                 </main>
